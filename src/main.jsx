@@ -14,7 +14,6 @@ const router = createBrowserRouter([
   {
     element:<App/>,
     children:[
-    
       {
          path:'/dashboard',
         element:<Dashboard/>
@@ -28,7 +27,8 @@ const router = createBrowserRouter([
   {
     path:'/auth/sign-in',
     element:<SignIn/>
-  }
+  },
+  
 ])
 
 createRoot(document.getElementById('root')).render(
