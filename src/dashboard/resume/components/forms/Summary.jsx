@@ -1,33 +1,86 @@
+import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea'
 import { ResumeInfoContext } from '@/context/ResumeInfoContext'
-import React, { useContext, useEffect } from 'react'
-
-function Summary() {
+import React, { useContext, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import {LoaderCircle} from 'lucide-react';
+import { Brain } from 'lucide-react';
+import GlobalApi from './../../../../../service/GlobalApi';
+import { AIchatSession } from './../../../../../service/AIModal';
+const prompt="Job Title: {jobTitle} , Depends on job title give me summary for my resume with 4-5 lines in JSON format with field experience Level and Summary with Experience level for Fresher, Mid-level, Experienced"
+function Summary(enabledNext) {
     const {resumeInfo,setResumeInfo}=useContext(ResumeInfoContext); 
     const [summary,setSummary]=useState();
-
+    const [loading,setLoading]=useState(false);
+    const params=useParams();
+    const [aiGeneratedSummaryList,setAiGeneratedSummaryList]=useState();
     useEffect(()=>{
         summary&&setResumeInfo({
             ...resumeInfo,
             summary:summary
         })
     },[summary])
+    const GenerateSummaryFromAI=async()=>{
+        setLoading(true);
+        const PROMPT=prompt.replace('{jobTitle}',resumeInfo?.jobTitle);
+        console.log(PROMPT);
+        const result=await AIchatSession.sendMessage(PROMPT);
+        console.log(JSON.parse(result.response.text()));
+        setAiGeneratedSummaryList(JSON.parse([result.response.text()]))
+        setLoading(false);
+    }
+    const onSave=(e)=>{
+        e.preventDefault();
+        setLoading(true);
+        const data={
+            data:
+            {
+                summary:summary
+            }
+        }
+        GlobalApi.UpdateResumeDetail(params?.resumeId,data).then(resp=>{
+            console.log(resp);
+            enabledNext(true);
+            setLoading(false);
+            toast("Details updated")
+        },(error)=>{
+            setLoading(false);
+        });
+    }
   return (
     <div>
          <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
         <h2 className='font-bold'>Summary</h2>
         <p>Add Summary for your job title</p>
-        </div>
-        <div className='mt-7'>
+
+        <form className='mt-7' onSubmit={onSave}>
             <div className='flex justify-between items-end'>
                 <label>Add Summary</label>
-                <Button variant="outline" size="sm" className="border-primary text-primary">Generate from AI</Button>
+                <Button variant="outline" onClick={()=>GenerateSummaryFromAI()} type="button" size="sm" className="border-primary text-primary flex gap-2">
+                    <Brain className='h-4 w-4'/>Generate from AI</Button>
             </div>
             <Textarea className="mt-5"
             onChange={(e)=>setSummary(e.target.value)}
             />
+            <div className='mt-2 flex justify-end'>
+            <Button type='submit'
+                disabled={loading}>
+                    {loading?<LoaderCircle className='animate-spin'/>:'Save'}</Button>
+            </div>
+        </form>
         </div>
+        {aiGeneratedSummaryList&&<div>
+            <h2 className='font-bold text-lg'>Suggestions</h2>
+            {aiGeneratedSummaryList.map((item,index)=>(
+                <div>
+                    <h2 className='font-bold my-1'>Level: {item?.experienceLevel}</h2>
+                    <p>{item.summary}</p>
+                </div>
+            ))}
+        </div>}
     </div>
+    
   )
 }
 
