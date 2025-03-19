@@ -8,19 +8,24 @@ import {LoaderCircle} from 'lucide-react';
 import { Brain } from 'lucide-react';
 import GlobalApi from './../../../../../service/GlobalApi';
 import { AIchatSession } from './../../../../../service/AIModal';
+
 const prompt="Job Title: {jobTitle} , Depends on job title give me summary for my resume with 4-5 lines in JSON format with field experience Level and Summary with Experience level for Fresher, Mid-level, Experienced"
+
 function Summary(enabledNext) {
     const {resumeInfo,setResumeInfo}=useContext(ResumeInfoContext); 
     const [summary,setSummary]=useState();
     const [loading,setLoading]=useState(false);
     const params=useParams();
     const [aiGeneratedSummaryList,setAiGeneratedSummaryList]=useState();
+   
     useEffect(()=>{
         summary&&setResumeInfo({
             ...resumeInfo,
             summary:summary
         })
+    
     },[summary])
+
     const GenerateSummaryFromAI=async()=>{
         setLoading(true);
         const PROMPT=prompt.replace('{jobTitle}',resumeInfo?.jobTitle);
@@ -30,6 +35,7 @@ function Summary(enabledNext) {
         setAiGeneratedSummaryList(JSON.parse([result.response.text()]))
         setLoading(false);
     }
+
     const onSave=(e)=>{
         e.preventDefault();
         setLoading(true);
@@ -48,6 +54,8 @@ function Summary(enabledNext) {
             setLoading(false);
         });
     }
+
+
   return (
     <div>
          <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
@@ -70,6 +78,7 @@ function Summary(enabledNext) {
             </div>
         </form>
         </div>
+
         {aiGeneratedSummaryList&&<div>
             <h2 className='font-bold text-lg'>Suggestions</h2>
             {aiGeneratedSummaryList.map((item,index)=>(
@@ -79,6 +88,7 @@ function Summary(enabledNext) {
                 </div>
             ))}
         </div>}
+        
     </div>
     
   )

@@ -1,0 +1,78 @@
+import { Button } from '@/components/ui/button';
+import { Brain, LoaderCircle } from 'lucide-react';
+import React, { useState, useContext } from 'react'
+import { BtnBold, BtnBulletList, BtnClearFormatting, BtnItalic, BtnLink, BtnNumberedList, BtnStrikeThrough, BtnStyles, BtnUnderline, Editor, EditorProvider, HtmlButton, Separator, Toolbar } from 'react-simple-wysiwyg'
+import { AIchatSession } from '../../../../service/AIModal';
+import { toast } from 'sonner';
+import { ResumeInfoContext } from '@/context/ResumeInfoContext';
+
+const PROMPT = "Job Title: {positionTitle} , Depends on job title give me 5-7 bulllet points for my experience in resume, give me result in HTML format"
+
+function RichTextEditor({onRichTextEditorChange, index}) {
+    const [value, setValue] = useState('');
+    const [loading, setLoading] = useState(false);
+    const {resumeInfo, setResumeInfo} = useContext(ResumeInfoContext);
+
+    const GenerateSummaryFromAI = async() => {
+        setLoading(true);
+        if(!resumeInfo.experience[index].title) {
+            toast('Please add job title first');
+            return;
+        }
+
+        const prompt = PROMPT.replace('{positionTitle}', resumeInfo.experience[index].title);
+
+        const result = await AIchatSession.sendMessage(prompt);
+
+        console.log(result.response.text());
+        const resp = result.response.text()
+        setValue(resp.replace('[','').replace(']',''));
+        setLoading(false);
+    }
+
+    return (
+        <div>
+            <div className='flex justify-between my-2'>
+                <label className='text-xs'>Summary</label>
+                <Button 
+                    className="flex gap-2 border-primary text-primary"
+                    onClick={GenerateSummaryFromAI} 
+                    size="sm" 
+                    variant="outline"
+                >
+                    {loading ? (
+                        <LoaderCircle className="animate-spin"/>
+                    ) : (
+                        <>
+                            <Brain/>
+                            Generate from AI
+                        </>
+                    )}
+                </Button>
+            </div>
+            <EditorProvider>
+                <Editor 
+                    value={value} 
+                    onChange={(e) => {
+                        setValue(e.target.value)
+                        onRichTextEditorChange(e)
+                    }}
+                >
+                    <Toolbar>
+                        <BtnBold />
+                        <BtnItalic />
+                        <BtnUnderline />
+                        <BtnStrikeThrough />
+                        <Separator />
+                        <BtnNumberedList />
+                        <BtnBulletList />
+                        <Separator />
+                        <BtnLink />
+                    </Toolbar>
+                </Editor>
+            </EditorProvider>
+        </div>
+    )
+}
+
+export default RichTextEditor

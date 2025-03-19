@@ -30,9 +30,13 @@ function ExperiencePreview({resumeInfo}) {
                     {experience.state}
                     <span>{experience?.startDate} - {experience?.currentlyWorking?'Present':experience?.endDate}</span>
                     </h2>
-                    <p className='text-xs my-2'>
+                    {/* <p className='text-xs my-2'>
                         {experience.workSummary}
-                    </p>
+                    </p> */}
+
+                    <div dangerouslySetInnerHTML={{__html: experience.workSummary}}/>
+
+                    
             </div>
 
         })}
