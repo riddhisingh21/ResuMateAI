@@ -28,82 +28,42 @@ import GlobalApi from "../../../service/GlobalApi";
 import { toast } from "sonner";
   
 
-function ResumeCardItem({resume}){
-
+function ResumeCardItem({ resume, refreshData }) {
     const navigation = useNavigate();
+    const [openAlert, setOpenAlert] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const onDelete=()=>{
+    const onDelete = () => {
         setLoading(true);
-        GlobalApi.DeleteResumeById(resume.documentId).then(resp=>{
-            console.log(resp);
-            toast('Resume Deleted !')
-            refreshData();
-            setLoading(false);
-            setOpenAlert(false);
-        },
-        (error)=>{
-            console.log(error);
-            toast('Server Error, Please try again !')
-            setLoading(false);
-        }
-    )
-    }
-
-    const [openAlert, setOpenAlert] = useState(false)
-    const [loading, setLoading] = useState(false)
+        GlobalApi.DeleteResumeById(resume.id)
+            .then(resp => {
+                console.log(resp);
+                toast('Resume Deleted!');
+                refreshData();
+                setLoading(false);
+                setOpenAlert(false);
+            })
+            .catch(error => {
+                console.log(error);
+                toast('Server Error, Please try again!');
+                setLoading(false);
+            });
+    };
 
     return (
         <>
-        <Link to={'/dashboard/resume/'+resume.documentId+'/edit'}>
-            <div className='p-14 bg-graident-to-b bg-secondary flex items-center justify-center h-[280px] border border-primary rounded-lg
-            hover:scale-105 transition-all hover:shadow-md shadow-primary'>
-                <Notebook/>
-
+            <div className='p-14 bg-secondary flex items-center justify-center h-[280px] border border-primary rounded-lg
+                hover:scale-105 transition-all hover:shadow-md shadow-primary cursor-pointer'
+                onClick={() => navigation(`/dashboard/resume/${resume.id}/edit`)}
+            >
+                <Notebook />
             </div>
-        </Link>
-        <div className="border p-3 flex justify-between text-white"
-        style={{
-            backgroundColor:resume?.themeColor
-        }}>
-            <h2 className='text-center my-1'>{resume.title}</h2>
             
-            <DropdownMenu>
-            <DropdownMenuTrigger>
-            <MoreVertical className="h-4 w-4 curosr-pointer"/>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-                
-                <DropdownMenuItem onClick={()=>navigation('/dashboard/resume/'+resume.documentId+'/edit')} > <Pen/> Edit</DropdownMenuItem>
-                <DropdownMenuItem onClick={()=>navigation('/my-resume/'+resume.documentId+'/view')} >View</DropdownMenuItem>
-                <DropdownMenuItem onClick={()=>navigation('/my-resume/'+resume.documentId+'/view')}>Download</DropdownMenuItem>
-                <DropdownMenuItem onClick={()=>setOpenAlert(true)} >Delete</DropdownMenuItem>
-            </DropdownMenuContent>
-            </DropdownMenu>
-
-
-            <AlertDialog open={openAlert}>
-     
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your account
-                    and remove your data from our servers.
-                </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                <AlertDialogCancel onClick={()=>setOpenAlert(false)}>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete} disabled={loading} >
-                    {loading? <LoaderCircle className='animate-spin'/> : 'Delete' }
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
+            <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
+                {/* Add your alert dialog content here */}
             </AlertDialog>
-
-
-        </div>
         </>
-    )
+    );
 }
 
 export default ResumeCardItem

@@ -3,6 +3,8 @@ import dummy from '@/data/dummy';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GlobalApi from './../../../../../service/GlobalApi';
+import FormSection from '../../components/FormSection';
+import ResumePreview from '../../components/ResumePreview';
 
 function EditResume(){
 

@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import PersonalDetail from "./forms/PersonalDetail";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, LayoutGrid } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Home, LayoutGrid } from 'lucide-react'
 import Experience from "./forms/Experience";
 import Education from "./forms/Education";
 import Skills from "./forms/Skills";
-import { Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import ThemeColor from "./ThemeColor";
+import Summary from "./forms/Summary";
 
 function FormSection() {
     const [activeFormIndex, setActiveFormIndex] = useState(2);

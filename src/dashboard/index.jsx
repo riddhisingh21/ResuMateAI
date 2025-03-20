@@ -6,36 +6,37 @@ import ResumeCardItem from './components/ResumeCardItem';
 
 
 function Dashboard() {
+    const { user } = useUser();
+    const [resumeList, setResumeList] = useState([]);
 
-  const {user}=useUser();
+    useEffect(() => {
+        user && GetResumesList();
+    }, [user]);
 
-  const [resumeList,setResumeList]=useState([]);
+    const GetResumesList = () => {
+        GlobalApi.GetUserResumes(user?.primaryEmailAddress?.emailAddress)
+            .then(resp => {
+                setResumeList(resp.data.data);
+            });
+    };
 
-  useEffect(()=>{
-    user&&GetResumesList()
-  },[user])
+    return (
+        <div className='p-10 md:px-20 lg:px-32'>
+            <h2 className='font-bold text-3xl'>My Resume</h2>
+            <p>Start Creating AI Resume</p>
 
-  const GetResumesList=()=>{
-    GlobalApi.GetUserResumes(user?.primaryEmailAddress?.emailAddress)
-    .then(resp=>{
-    
-      setResumeList(resp.data.data);
-    })
-
-  }
-  return (
-    <div className='p-10 md:px-20 lg:px-32'>
-        <h2 className='font-bold text=3xl'>My Resume</h2>
-        <p>Start Creating AI Resume</p>
-
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mt-10'>
-            <AddResume/>
-            {resumeList.length>0&&resumeList.map((resume, index)=>{
-              <ResumeCardItem resume={resume} key={index} refeshData={GetResumesList} />
-            })}
+            <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mt-10'>
+                <AddResume />
+                {resumeList.length > 0 && resumeList.map((resume, index) => (
+                    <ResumeCardItem 
+                        resume={resume} 
+                        key={index} 
+                        refreshData={GetResumesList} 
+                    />
+                ))}
+            </div>
         </div>
-    </div>
-  )
+    );
 }
 
 export default Dashboard

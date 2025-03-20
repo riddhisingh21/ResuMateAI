@@ -1,28 +1,80 @@
-import axios from 'axios';
+// Import required modules and configuration
+import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_STRAPI_API_KEY;
+const BASE_URL = "http://localhost:1337/api";
 
 const axiosClient = axios.create({
-    baseURL: 'http://localhost:1337/api/',
+    baseURL: BASE_URL,
     headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-    }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+    },
 });
 
-const CreateNewResume = (data) => axiosClient.post('/user-resumes', data);
+// Add request interceptor for debugging
+axiosClient.interceptors.request.use(
+    (config) => {
+        console.log('Request:', config);
+        return config;
+    },
+    (error) => {
+        console.error('Request Error:', error);
+        return Promise.reject(error);
+    }
+);
 
-const GetUserResumes=(userEmail)=>axiosClient.get('/user-resumes?filters[userEmail][$eq]='+userEmail);
-const UpdateResumeDetail=(id,data)=>axiosClient.put('/user-resumes'+id,data);
+// Add response interceptor for debugging
+axiosClient.interceptors.response.use(
+    (response) => {
+        console.log('Response:', response);
+        return response;
+    },
+    (error) => {
+        console.error('Response Error:', error);
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            console.error('Error Data:', error.response.data);
+            console.error('Error Status:', error.response.status);
+            console.error('Error Headers:', error.response.headers);
+        }
+        return Promise.reject(error);
+    }
+);
 
-const GetResumeById=(id)=>axiosClient.get('/user-resumes/'+id+"?populate=*")
+// API Methods
+const CreateNewResume = (data) => {
+    return axiosClient.post('/user-resumes', { data });
+};
 
-const DeleteResumeById=(id)=>axiosClient.delete('/user-resumes/'+id);
+const GetUserResumes = (userEmail) => {
+    return axiosClient.get(`/user-resumes`, {
+        params: {
+            'filters[userEmail][$eq]': userEmail
+        }
+    });
+};
+
+const UpdateResumeDetail = (id, data) => {
+    return axiosClient.put(`/user-resumes/${id}`, { data });
+};
+
+const GetResumeById = (id) => {
+    return axiosClient.get(`/user-resumes/${id}`, {
+        params: {
+            populate: '*'
+        }
+    });
+};
+
+const DeleteResumeById = (id) => {
+    return axiosClient.delete(`/user-resumes/${id}`);
+};
 
 export default {
     CreateNewResume,
     GetUserResumes,
     UpdateResumeDetail,
     GetResumeById,
-    DeleteResumeById  
+    DeleteResumeById
 };

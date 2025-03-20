@@ -35,6 +35,7 @@ function AddResume() {
             userName: user?.fullName
 
         }
+
         GlobalApi.CreateNewResume(data).then(resp=>{
             console.log(resp.data.data.documentId);
             console.log(resp)

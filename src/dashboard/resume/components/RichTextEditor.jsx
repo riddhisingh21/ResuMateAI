@@ -8,27 +8,32 @@ import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 
 const PROMPT = "Job Title: {positionTitle} , Depends on job title give me 5-7 bulllet points for my experience in resume, give me result in HTML format"
 
-function RichTextEditor({onRichTextEditorChange, index}) {
-    const [value, setValue] = useState(defaultValue);
+function RichTextEditor({ onRichTextEditorChange, index }) {
+    const [value, setValue] = useState('');
     const [loading, setLoading] = useState(false);
-    const {resumeInfo, setResumeInfo} = useContext(ResumeInfoContext);
+    const { resumeInfo } = useContext(ResumeInfoContext);
 
-    const GenerateSummaryFromAI = async() => {
-        setLoading(true);
-        if(!resumeInfo.experience[index].title) {
-            toast('Please add job title first');
-            return;
+    const GenerateSummaryFromAI = async () => {
+        try {
+            setLoading(true);
+            if (!resumeInfo?.experience?.[index]?.title) {
+                toast.error('Please add job title first');
+                return;
+            }
+
+            const prompt = PROMPT.replace('{positionTitle}', resumeInfo.experience[index].title);
+            const result = await AIchatSession.sendMessage(prompt);
+            const response = await result.response.text();
+            
+            setValue(response.replace(/^\[|\]$/g, ''));
+            onRichTextEditorChange({ target: { value: response } });
+        } catch (error) {
+            console.error('AI Generation Error:', error);
+            toast.error('Failed to generate content');
+        } finally {
+            setLoading(false);
         }
-
-        const prompt = PROMPT.replace('{positionTitle}', resumeInfo.experience[index].title);
-
-        const result = await AIchatSession.sendMessage(prompt);
-
-        console.log(result.response.text());
-        const resp = result.response.text()
-        setValue(resp.replace('[','').replace(']',''));
-        setLoading(false);
-    }
+    };
 
     return (
         <div>
@@ -39,6 +44,7 @@ function RichTextEditor({onRichTextEditorChange, index}) {
                     onClick={GenerateSummaryFromAI} 
                     size="sm" 
                     variant="outline"
+                    disabled={loading}
                 >
                     {loading ? (
                         <LoaderCircle className="animate-spin"/>
@@ -54,8 +60,8 @@ function RichTextEditor({onRichTextEditorChange, index}) {
                 <Editor 
                     value={value} 
                     onChange={(e) => {
-                        setValue(e.target.value)
-                        onRichTextEditorChange(e)
+                        setValue(e.target.value);
+                        onRichTextEditorChange(e);
                     }}
                 >
                     <Toolbar>
@@ -72,7 +78,7 @@ function RichTextEditor({onRichTextEditorChange, index}) {
                 </Editor>
             </EditorProvider>
         </div>
-    )
+    );
 }
 
 export default RichTextEditor
