@@ -2,6 +2,7 @@ import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import GlobalApi from "./../../../../service/GlobalApi";
+import { RWebShare } from "react-web-share";
 
 function ViewResume(){
 
@@ -31,8 +32,18 @@ function ViewResume(){
                 <h2 className="text-center text-2xl font-medium">Congrats! Your ResuMate AI generated resume is ready !</h2>
                 <p className="text-center text-gray-400">Now you are ready to download you resume and you can share unique resume URL with your friends and family</p>
                 <div className="flex justify-between px-44 my-10">
-                    <Button onClick={HandleDownload}>Download</Button>
+                  
+                   <Button onClick={HandleDownload}>Download</Button>
+                   <RWebShare
+        data={{
+          text: "Hello, everyone this is my resume please open url to see it",
+          url: import.meta.env.VITE_BASE_URL+"/my-resume/"+resumeId+"/view",
+          title: resumeInfo?.firstName+" "+resumeInfo?.lastName+" Resume",
+        }}
+        onClick={() => console.log("shared successfully!")}
+      >
                     <Button>Share</Button>
+                    </RWebShare>
                 </div>
                 </div>
                 
