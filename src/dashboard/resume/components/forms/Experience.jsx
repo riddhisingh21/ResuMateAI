@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import RichTextEditor from '../RichTextEditor';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
+import { LoaderCircle } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 const formField = {
     title:'',
     companyName:'',
@@ -17,7 +19,16 @@ function Experience() {
     
     const [experienceList ,setExperienceList]=useState([formField]);
 
+
+
     const {resumeInfo,setResumeInfo} =useContext(ResumeInfoContext);
+    const params=useParams();
+    const[loading, setLoading]=useState(false);
+
+    useEffect(()=>{
+        resumeInfo&&setExperienceList(resumeInfo?.Experience)
+
+    },[resumeInfo])
 
     const handleChange = (index, event)=>{
 
@@ -47,6 +58,15 @@ function Experience() {
 
     }
 
+    const onSave=()=>{
+        setLoading(true);
+        const data={
+            data:{
+                Experience:experienceList.map(({id,...rest})=>rest)
+            }
+        }
+    }
+
     useEffect(()=>{
         setResumeInfo({
             ...resumeInfo,
@@ -68,38 +88,57 @@ function Experience() {
 
                         <div>
                             <label className='text-xs'>Position Title</label>
-                            <Input name="title" onChange={(event)=>handleChange(index, event)}/>
+                            <Input name="title" 
+                            onChange={(event)=>handleChange(index, event)}
+                            defaultValue={item?.title}
+                            />
                         </div>
 
                         <div>
                             <label className='text-xs'>Company Name</label>
-                            <Input name="companyName" onChange={(event)=>handleChange(index, event)}/>
+                            <Input name="companyName" 
+                            onChange={(event)=>handleChange(index, event)}
+                            defaultValue={item?.companyName}
+                            />
                         </div>
 
                         <div>
                             <label className='text-xs'>City</label>
-                            <Input name="city" onChange={(event)=>handleChange(index, event)}/>
+                            <Input name="city" 
+                            onChange={(event)=>handleChange(index, event)}
+                            defaultValue={item?.city}
+                            />
                         </div>
 
                         <div>
                             <label className='text-xs'>State</label>
-                            <Input name="state" onChange={(event)=>handleChange(index, event)}/>
+                            <Input name="state" 
+                            onChange={(event)=>handleChange(index, event)}
+                            defaultValue={item?.state}
+                            />
                         </div>
 
                         <div>
                             <label className='text-xs'>Start Date</label>
-                            <Input type="date" name="startDate" onChange={(event)=>handleChange(index, event)}/>
+                            <Input type="date" name="startDate" 
+                            onChange={(event)=>handleChange(index, event)}
+                            defaultValue={item?.startDate}
+                            />
                         </div>
 
                         <div>
                             <label className='text-xs'>End Date</label>
-                            <Input type="date" name="endDate" onChange={(event)=>handleChange(index, event)}/>
+                            <Input type="date" name="endDate" 
+                            onChange={(event)=>handleChange(index, event)}
+                            defaultValue={item?.endDate}
+                            />
                         </div>
 
                         <div className='col-span-2'>
 
                             <RichTextEditor 
                             index={index}
+                            defaultValue={item?.workSummary}
                             onRichTextEditorChange={(event)=>handleRichTextEditor(event, 'workSummary',index)}/>
 
                         </div>
@@ -110,11 +149,13 @@ function Experience() {
         </div>
 
         <div className='flex justify-between'>
-            <div>
-            <Button variant="outline" className="text-primary" onClick={AddNewExperience} >Add More</Button>
-            <Button variant="outline" className="text-primary" onClick={RemoveExperience} >Remove</Button>
+            <div className="flex gap-2">
+            <Button variant="outline" className="text-primary" onClick={AddNewExperience} >+ Add More</Button>
+            <Button variant="outline" className="text-primary" onClick={RemoveExperience} >- Remove</Button>
             </div>
-            <Button>Save</Button>
+            <Button disabled={loading} onClick={()=>onSave()}>
+                {loading? <LoaderCircle className='animate-spin'/>:'Save'}
+            </Button>
         </div>
     </div>
   )

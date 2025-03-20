@@ -9,7 +9,7 @@ import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 const PROMPT = "Job Title: {positionTitle} , Depends on job title give me 5-7 bulllet points for my experience in resume, give me result in HTML format"
 
 function RichTextEditor({onRichTextEditorChange, index}) {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState(defaultValue);
     const [loading, setLoading] = useState(false);
     const {resumeInfo, setResumeInfo} = useContext(ResumeInfoContext);
 

@@ -4,6 +4,30 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@media print{
+  #no-print{
+    display: none;
+  
+  }
+
+  #print-area{
+    display: block;
+  }
+
+  body{
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+}
+
+@page {
+  size:auto;
+  margin: 0mm;
+}
+
+
 .rsw-ce ul {
   list-style: disc;
   padding-left: 2em;
