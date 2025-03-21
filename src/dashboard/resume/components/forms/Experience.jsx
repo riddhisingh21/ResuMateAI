@@ -18,7 +18,7 @@ function Experience() {
         endDate: '',
         currentlyWorking: false,
         description: ''
-    }]);  // Initialize with one empty experience object
+    }]);  
     
     const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
     const params = useParams();
@@ -39,6 +39,7 @@ function Experience() {
         };
         setExperienceList(newEntries);
         
+        // Update the context immediately
         setResumeInfo(prev => ({
             ...prev,
             experience: newEntries
@@ -53,6 +54,7 @@ function Experience() {
         };
         setExperienceList(newEntries);
         
+        // Update the context immediately
         setResumeInfo(prev => ({
             ...prev,
             experience: newEntries

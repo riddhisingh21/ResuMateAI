@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Brain, LoaderCircle } from 'lucide-react';
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { BtnBold, BtnBulletList, BtnClearFormatting, BtnItalic, BtnLink, BtnNumberedList, BtnStrikeThrough, BtnStyles, BtnUnderline, Editor, EditorProvider, HtmlButton, Separator, Toolbar } from 'react-simple-wysiwyg'
 import { AIchatSession } from '../../../../service/AIModal';
 import { toast } from 'sonner';
@@ -8,10 +8,40 @@ import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 
 const PROMPT = "Job Title: {positionTitle} , Depends on job title give me 5-7 bulllet points for my experience in resume, give me result in HTML format"
 
-function RichTextEditor({ onRichTextEditorChange, index }) {
-    const [value, setValue] = useState('');
+function RichTextEditor({ value, onChange, index }) {
+    const [editorValue, setEditorValue] = useState(value || '');
     const [loading, setLoading] = useState(false);
     const { resumeInfo } = useContext(ResumeInfoContext);
+
+    useEffect(() => {
+        setEditorValue(value || '');
+    }, [value]);
+
+    const handleEditorChange = (e) => {
+        const newValue = e.target.value;
+        setEditorValue(newValue);
+        onChange(newValue);
+    };
+
+    const formatAIResponseToHTML = (response) => {
+        try {
+            const parsedResponse = JSON.parse(response);
+            let htmlContent = '';
+
+            parsedResponse.bulletPoints.forEach(section => {
+                htmlContent += `<p><strong>${section.experienceLevel}:</strong></p><ul>`;
+                section.bulletPoints.forEach(point => {
+                    htmlContent += `<li>${point}</li>`;
+                });
+                htmlContent += '</ul>';
+            });
+
+            return htmlContent;
+        } catch (error) {
+            console.error('Parsing error:', error);
+            return response; // Return original response if parsing fails
+        }
+    };
 
     const GenerateSummaryFromAI = async () => {
         try {
@@ -25,8 +55,11 @@ function RichTextEditor({ onRichTextEditorChange, index }) {
             const result = await AIchatSession.sendMessage(prompt);
             const response = await result.response.text();
             
-            setValue(response.replace(/^\[|\]$/g, ''));
-            onRichTextEditorChange({ target: { value: response } });
+            // Format the response into HTML
+            const formattedHTML = formatAIResponseToHTML(response);
+            
+            setEditorValue(formattedHTML);
+            onChange(formattedHTML);
         } catch (error) {
             console.error('AI Generation Error:', error);
             toast.error('Failed to generate content');
@@ -58,11 +91,9 @@ function RichTextEditor({ onRichTextEditorChange, index }) {
             </div>
             <EditorProvider>
                 <Editor 
-                    value={value} 
-                    onChange={(e) => {
-                        setValue(e.target.value);
-                        onRichTextEditorChange(e);
-                    }}
+                    value={editorValue} 
+                    onChange={handleEditorChange}
+                    className="min-h-[200px]"
                 >
                     <Toolbar>
                         <BtnBold />
@@ -74,6 +105,7 @@ function RichTextEditor({ onRichTextEditorChange, index }) {
                         <BtnBulletList />
                         <Separator />
                         <BtnLink />
+                        <BtnClearFormatting />
                     </Toolbar>
                 </Editor>
             </EditorProvider>

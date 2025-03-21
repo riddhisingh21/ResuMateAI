@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
@@ -18,7 +19,6 @@ function Summary({ enabledNext }) {
     const [aiGeneratedSummaryList, setAiGeneratedSummaryList] = useState([]);
 
     useEffect(() => {
-        // Only update if resumeInfo exists and summary has a value
         if (resumeInfo && summary) {
             setResumeInfo(prev => ({
                 ...prev,
@@ -27,12 +27,23 @@ function Summary({ enabledNext }) {
         }
     }, [summary, setResumeInfo]);
 
+    const formatAIResponse = (response) => {
+        try {
+            const parsedResponse = JSON.parse(response);
+            if (parsedResponse.jobTitle && parsedResponse.resumeSummaries) {
+                return parsedResponse.resumeSummaries.map(section => ({
+                    experienceLevel: section.experienceLevel,
+                    summary: section.summary
+                }));
+            }
+            return [];
+        } catch (error) {
+            console.error('Parsing error:', error);
+            return [];
+        }
+    };
+
     const GenerateSummaryFromAI = async () => {
-
-        console.log('API Key:', import.meta.env.VITE_GOOGLE_AI_API_KEY ? 'Present' : 'Missing');
-        console.log('Button clicked');
-        console.log('Job Title:', resumeInfo?.jobTitle);
-
         if (!resumeInfo?.jobTitle) {
             toast.error('Please add job title first');
             return;
@@ -40,10 +51,7 @@ function Summary({ enabledNext }) {
 
         setLoading(true);
         try {
-            // Format the prompt with the job title
             const formattedPrompt = PROMPT.replace('{jobTitle}', resumeInfo.jobTitle);
-            
-            // Send message to Gemini API
             const result = await AIchatSession.sendMessage(formattedPrompt);
             
             if (!result || !result.response) {
@@ -51,19 +59,15 @@ function Summary({ enabledNext }) {
             }
 
             const response = await result.response.text();
-            console.log('AI Response:', response); // Debug log
+            console.log('AI Response:', response);
             
-            try {
-                const parsedResponse = JSON.parse(response);
-                const formattedResponse = Array.isArray(parsedResponse) ? parsedResponse : [parsedResponse];
+            const formattedResponse = formatAIResponse(response);
+            
+            if (formattedResponse.length > 0) {
                 setAiGeneratedSummaryList(formattedResponse);
-                
-                // If there's at least one suggestion, set it as the current summary
-                if (formattedResponse.length > 0 && formattedResponse[0].summary) {
-                    setSummary(formattedResponse[0].summary);
-                }
-            } catch (parseError) {
-                console.error('Failed to parse AI response:', parseError);
+                // Set the first summary as default
+                setSummary(formattedResponse[0].summary);
+            } else {
                 toast.error('Invalid response format from AI');
             }
         } catch (error) {
@@ -117,11 +121,12 @@ function Summary({ enabledNext }) {
                 <form className='mt-7' onSubmit={onSave}>
                     <div className='flex justify-between items-end'>
                         <label>Add Summary</label>
-
                         <Button 
                             variant="outline" 
-                            onClick={() => GenerateSummaryFromAI()} 
-                            type="submit" 
+                            onClick={(e) => {
+                                e.preventDefault();
+                                GenerateSummaryFromAI();
+                            }}
                             size="sm" 
                             className="border-primary text-primary flex gap-2"
                             disabled={loading}
@@ -129,13 +134,13 @@ function Summary({ enabledNext }) {
                             <Brain className='h-4 w-4'/>
                             Generate from AI
                         </Button>
-
                     </div>
                     <Textarea 
                         className="mt-5"
                         value={summary}
                         onChange={(e) => setSummary(e.target.value)}
                         placeholder="Enter your professional summary"
+                        rows={6}
                     />
                     <div className='mt-2 flex justify-end'>
                         <Button 
@@ -150,17 +155,23 @@ function Summary({ enabledNext }) {
 
             {aiGeneratedSummaryList.length > 0 && (
                 <div className="mt-5">
-                    <h2 className='font-bold text-lg'>Suggestions</h2>
-                    {aiGeneratedSummaryList.map((item, index) => (
-                        <div 
-                            key={index} 
-                            className="mt-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
-                            onClick={() => handleSummarySelect(item?.summary)}
-                        >
-                            <h2 className='font-bold my-1'>Level: {item?.experienceLevel}</h2>
-                            <p className="text-sm">{item?.summary}</p>
-                        </div>
-                    ))}
+                    <h2 className='font-bold text-lg'>AI Generated Suggestions</h2>
+                    <div className="space-y-4 mt-3">
+                        {aiGeneratedSummaryList.map((item, index) => (
+                            <div 
+                                key={index} 
+                                className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                                onClick={() => handleSummarySelect(item.summary)}
+                            >
+                                <h3 className='font-bold text-primary mb-2'>
+                                    {item.experienceLevel} Level
+                                </h3>
+                                <p className="text-sm whitespace-pre-line">
+                                    {item.summary}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>
