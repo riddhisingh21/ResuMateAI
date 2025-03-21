@@ -1,13 +1,14 @@
 import { Button } from '@/components/ui/button';
-import React, { useContext, useEffect, useState } from 'react'
+import { Input } from '@/components/ui/input';
+import React, { useContext, useEffect, useState } from 'react';
 import RichTextEditor from '../RichTextEditor';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 import { LoaderCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import GlobalApi from './../../../../../service/GlobalApi';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
-function Experience() {;
+function Experience() {
     const [experienceList, setExperienceList] = useState([]);
     const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
     const params = useParams();
@@ -28,45 +29,68 @@ function Experience() {;
         };
         setExperienceList(newEntries);
         
-        setResumeInfo({
-            ...resumeInfo,
+        setResumeInfo(prev => ({
+            ...prev,
             experience: newEntries
-        });
+        }));
     };
 
-    const onSave = () => {
-        setLoading(true);
-        const data = {
-            data: {
-                experience: experienceList
-            }
+    const handleRichTextChange = (index, value) => {
+        const newEntries = [...experienceList];
+        newEntries[index] = {
+            ...newEntries[index],
+            description: value
         };
+        setExperienceList(newEntries);
+        
+        setResumeInfo(prev => ({
+            ...prev,
+            experience: newEntries
+        }));
+    };
 
-        GlobalApi.UpdateResumeDetail(params.resumeId, data)
-            .then(resp => {
+    const onSave = async () => {
+        if (experienceList.length === 0) {
+            toast.error('Please add at least one experience');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const data = {
+                data: {
+                    experience: experienceList
+                }
+            };
+
+            const response = await GlobalApi.UpdateResumeDetail(params.resumeId, data);
+            if (response?.data) {
                 toast.success('Experience updated successfully');
-                setLoading(false);
-            })
-            .catch(error => {
-                toast.error('Failed to update experience');
-                setLoading(false);
-            });
+            }
+        } catch (error) {
+            console.error('Save Error:', error);
+            toast.error(error.response?.data?.error?.message || 'Failed to update experience');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const AddNewExperience = () => {
-        setExperienceList([...experienceList, {
+        setExperienceList(prev => [...prev, {
             title: '',
             company: '',
+            city: '',
+            state: '',
             startDate: '',
             endDate: '',
-            current: false,
+            currentlyWorking: false,
             description: ''
         }]);
     };
 
     const RemoveExperience = () => {
         if (experienceList.length > 0) {
-            setExperienceList(experienceList.slice(0, -1));
+            setExperienceList(prev => prev.slice(0, -1));
         }
     };
 
@@ -74,20 +98,119 @@ function Experience() {;
         <div className="space-y-4">
             {experienceList.map((exp, index) => (
                 <div key={index} className="p-4 border rounded-lg">
-                    {/* Add your form fields here */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Job Title</label>
+                            <Input
+                                type="text"
+                                name="title"
+                                value={exp.title}
+                                onChange={(e) => handleChange(index, e)}
+                                placeholder="e.g. Software Engineer"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Company</label>
+                            <Input
+                                type="text"
+                                name="company"
+                                value={exp.company}
+                                onChange={(e) => handleChange(index, e)}
+                                placeholder="e.g. Tech Corp"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">City</label>
+                            <Input
+                                type="text"
+                                name="city"
+                                value={exp.city}
+                                onChange={(e) => handleChange(index, e)}
+                                placeholder="e.g. San Francisco"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">State</label>
+                            <Input
+                                type="text"
+                                name="state"
+                                value={exp.state}
+                                onChange={(e) => handleChange(index, e)}
+                                placeholder="e.g. CA"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Start Date</label>
+                            <Input
+                                type="date"
+                                name="startDate"
+                                value={exp.startDate}
+                                onChange={(e) => handleChange(index, e)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">End Date</label>
+                            <div className="flex items-center gap-2">
+                                <Input
+                                    type="date"
+                                    name="endDate"
+                                    value={exp.endDate}
+                                    onChange={(e) => handleChange(index, e)}
+                                    disabled={exp.currentlyWorking}
+                                />
+                                <label className="flex items-center gap-1">
+                                    <Input
+                                        type="checkbox"
+                                        name="currentlyWorking"
+                                        checked={exp.currentlyWorking}
+                                        onChange={(e) => handleChange(index, {
+                                            target: {
+                                                name: 'currentlyWorking',
+                                                value: e.target.checked
+                                            }
+                                        })}
+                                        className="w-4 h-4"
+                                    />
+                                    <span className="text-sm">Current</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-4">
+                        <RichTextEditor
+                            value={exp.description}
+                            onChange={(value) => handleRichTextChange(index, value)}
+                            index={index}
+                        />
+                    </div>
                 </div>
             ))}
             
             <div className='flex justify-between'>
                 <div className="flex gap-2">
-                    <Button variant="outline" className="text-primary" onClick={AddNewExperience}>
+                    <Button 
+                        variant="outline" 
+                        className="text-primary" 
+                        onClick={AddNewExperience}
+                        type="button"
+                    >
                         + Add More
                     </Button>
-                    <Button variant="outline" className="text-primary" onClick={RemoveExperience}>
+                    <Button 
+                        variant="outline" 
+                        className="text-primary" 
+                        onClick={RemoveExperience}
+                        type="button"
+                        disabled={experienceList.length === 0}
+                    >
                         - Remove
                     </Button>
                 </div>
-                <Button disabled={loading} onClick={onSave}>
+                <Button 
+                    disabled={loading} 
+                    onClick={onSave}
+                    type="button"
+                >
                     {loading ? <LoaderCircle className='animate-spin'/> : 'Save'}
                 </Button>
             </div>
