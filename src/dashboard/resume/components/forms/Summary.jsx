@@ -8,7 +8,7 @@ import { LoaderCircle, Brain } from 'lucide-react';
 import GlobalApi from './../../../../../service/GlobalApi';
 import { AIchatSession } from './../../../../../service/AIModal';
 
-const prompt = "Job Title: {jobTitle} , Depends on job title give me summary for my resume with 4-5 lines in JSON format with field experience Level and Summary with Experience level for Fresher, Mid-level, Experienced";
+const PROMPT = "Job Title: {jobTitle} , Depends on job title give me summary for my resume with 4-5 lines in JSON format with field experience Level and Summary with Experience level for Fresher, Mid-level, Experienced";
 
 function Summary({ enabledNext }) {
     const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
@@ -18,69 +18,94 @@ function Summary({ enabledNext }) {
     const [aiGeneratedSummaryList, setAiGeneratedSummaryList] = useState([]);
 
     useEffect(() => {
-        if (summary) {
-            setResumeInfo({
-                ...resumeInfo,
-                summary: summary
-            });
+        // Only update if resumeInfo exists and summary has a value
+        if (resumeInfo && summary) {
+            setResumeInfo(prev => ({
+                ...prev,
+                summary
+            }));
         }
-    }, [summary]);
+    }, [summary, setResumeInfo]);
 
     const GenerateSummaryFromAI = async () => {
+
+        console.log('API Key:', import.meta.env.VITE_GOOGLE_AI_API_KEY ? 'Present' : 'Missing');
+        console.log('Button clicked');
+        console.log('Job Title:', resumeInfo?.jobTitle);
+
+        if (!resumeInfo?.jobTitle) {
+            toast.error('Please add job title first');
+            return;
+        }
+
+        setLoading(true);
         try {
-            setLoading(true);
-            if (!resumeInfo?.jobTitle) {
-                toast.error('Please add job title first');
-                return;
+            // Format the prompt with the job title
+            const formattedPrompt = PROMPT.replace('{jobTitle}', resumeInfo.jobTitle);
+            
+            // Send message to Gemini API
+            const result = await AIchatSession.sendMessage(formattedPrompt);
+            
+            if (!result || !result.response) {
+                throw new Error('No response from AI');
             }
 
-            const PROMPT = prompt.replace('{jobTitle}', resumeInfo.jobTitle);
-            const result = await AIchatSession.sendMessage(PROMPT);
             const response = await result.response.text();
+            console.log('AI Response:', response); // Debug log
             
-            // Properly parse the JSON response
-            let parsedResponse;
             try {
-                parsedResponse = JSON.parse(response);
-                // Ensure the response is an array
-                if (!Array.isArray(parsedResponse)) {
-                    parsedResponse = [parsedResponse];
+                const parsedResponse = JSON.parse(response);
+                const formattedResponse = Array.isArray(parsedResponse) ? parsedResponse : [parsedResponse];
+                setAiGeneratedSummaryList(formattedResponse);
+                
+                // If there's at least one suggestion, set it as the current summary
+                if (formattedResponse.length > 0 && formattedResponse[0].summary) {
+                    setSummary(formattedResponse[0].summary);
                 }
-                setAiGeneratedSummaryList(parsedResponse);
             } catch (parseError) {
                 console.error('Failed to parse AI response:', parseError);
                 toast.error('Invalid response format from AI');
             }
         } catch (error) {
             console.error('AI Generation Error:', error);
-            toast.error('Failed to generate summary');
+            toast.error('Failed to generate summary. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
-    const onSave = (e) => {
+    const onSave = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        const data = {
-            data: {
-                summary: summary
-            }
-        };
         
-        GlobalApi.UpdateResumeDetail(params?.resumeId, data)
-            .then(resp => {
-                console.log(resp);
+        if (!summary.trim()) {
+            toast.error('Please add a summary');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const payload = {
+                data: { summary }
+            };
+            
+            const response = await GlobalApi.UpdateResumeDetail(params?.resumeId, payload);
+            
+            if (response?.data) {
                 enabledNext(true);
-                toast.success("Details updated");
-            })
-            .catch(error => {
-                console.error('Save Error:', error);
-                toast.error("Failed to save details");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+                toast.success('Summary updated successfully');
+            }
+        } catch (error) {
+            console.error('Save Error:', error);
+            const errorMessage = error.response?.data?.error?.message || 'Failed to save summary';
+            toast.error(errorMessage);
+            enabledNext(false);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSummarySelect = (selectedSummary) => {
+        setSummary(selectedSummary);
     };
 
     return (
@@ -92,10 +117,11 @@ function Summary({ enabledNext }) {
                 <form className='mt-7' onSubmit={onSave}>
                     <div className='flex justify-between items-end'>
                         <label>Add Summary</label>
+
                         <Button 
                             variant="outline" 
-                            onClick={GenerateSummaryFromAI} 
-                            type="button" 
+                            onClick={() => GenerateSummaryFromAI()} 
+                            type="submit" 
                             size="sm" 
                             className="border-primary text-primary flex gap-2"
                             disabled={loading}
@@ -103,11 +129,13 @@ function Summary({ enabledNext }) {
                             <Brain className='h-4 w-4'/>
                             Generate from AI
                         </Button>
+
                     </div>
                     <Textarea 
                         className="mt-5"
                         value={summary}
                         onChange={(e) => setSummary(e.target.value)}
+                        placeholder="Enter your professional summary"
                     />
                     <div className='mt-2 flex justify-end'>
                         <Button 
@@ -120,11 +148,15 @@ function Summary({ enabledNext }) {
                 </form>
             </div>
 
-            {aiGeneratedSummaryList && aiGeneratedSummaryList.length > 0 && (
+            {aiGeneratedSummaryList.length > 0 && (
                 <div className="mt-5">
                     <h2 className='font-bold text-lg'>Suggestions</h2>
                     {aiGeneratedSummaryList.map((item, index) => (
-                        <div key={index} className="mt-3 p-4 border rounded-lg">
+                        <div 
+                            key={index} 
+                            className="mt-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                            onClick={() => handleSummarySelect(item?.summary)}
+                        >
                             <h2 className='font-bold my-1'>Level: {item?.experienceLevel}</h2>
                             <p className="text-sm">{item?.summary}</p>
                         </div>

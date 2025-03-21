@@ -1,5 +1,5 @@
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
-import dummy from '@/data/dummy';
+                  
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GlobalApi from './../../../../../service/GlobalApi';

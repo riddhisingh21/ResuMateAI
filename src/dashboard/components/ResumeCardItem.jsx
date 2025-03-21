@@ -26,6 +26,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import GlobalApi from "../../../service/GlobalApi";
 import { toast } from "sonner";
+import { useState } from "react";
   
 
 function ResumeCardItem({ resume, refreshData }) {
@@ -58,6 +59,8 @@ function ResumeCardItem({ resume, refreshData }) {
             >
                 <Notebook />
             </div>
+
+            <h2 className="text-center my-1">{resume.title}</h2>
             
             <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
                 {/* Add your alert dialog content here */}

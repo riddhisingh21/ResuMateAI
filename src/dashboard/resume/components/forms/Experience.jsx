@@ -4,10 +4,10 @@ import RichTextEditor from '../RichTextEditor';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 import { LoaderCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { GlobalApi } from '@/api/GlobalApi';
+import GlobalApi from './../../../../../service/GlobalApi';
 import { toast } from 'react-toastify';
 
-function Experience() {
+function Experience() {;
     const [experienceList, setExperienceList] = useState([]);
     const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
     const params = useParams();

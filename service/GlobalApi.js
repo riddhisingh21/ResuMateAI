@@ -56,7 +56,13 @@ const GetUserResumes = (userEmail) => {
 };
 
 const UpdateResumeDetail = (id, data) => {
-    return axiosClient.put(`/user-resumes/${id}`, { data });
+    // Ensure data is properly structured for Strapi
+    const payload = {
+        data: {
+            ...data.data, // Add additional data if needed, e.g., 'firstName', 'lastName', etc.
+        }
+    };
+    return axiosClient.put(`/user-resumes/${id}`, payload);
 };
 
 const GetResumeById = (id) => {
