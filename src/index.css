@@ -7,7 +7,7 @@
 @media print{
   #no-print{
     display: none;
-  
+
   }
 
   #print-area{
@@ -26,7 +26,6 @@
   size:auto;
   margin: 0mm;
 }
-
 
 .rsw-ce ul {
   list-style: disc;

@@ -9,13 +9,23 @@ import GlobalApi from './../../../../../service/GlobalApi';
 import { toast } from 'sonner';
 
 function Experience() {
-    const [experienceList, setExperienceList] = useState([]);
+    const [experienceList, setExperienceList] = useState([{
+        title: '',
+        company: '',
+        city: '',
+        state: '',
+        startDate: '',
+        endDate: '',
+        currentlyWorking: false,
+        description: ''
+    }]);  // Initialize with one empty experience object
+    
     const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
     const params = useParams();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (resumeInfo?.experience) {
+        if (resumeInfo?.experience && resumeInfo.experience.length > 0) {
             setExperienceList(resumeInfo.experience);
         }
     }, [resumeInfo]);
@@ -59,7 +69,7 @@ function Experience() {
         try {
             const data = {
                 data: {
-                    experience: experienceList
+                    Experience: experienceList
                 }
             };
 
@@ -76,16 +86,45 @@ function Experience() {
     };
 
     const AddNewExperience = () => {
-        setExperienceList(prev => [...prev, {
-            title: '',
-            company: '',
-            city: '',
-            state: '',
-            startDate: '',
-            endDate: '',
-            currentlyWorking: false,
-            description: ''
-        }]);
+        try {
+            // Maximum limit check
+            if (experienceList.length >= 10) {
+                toast.error('Maximum limit of 10 experiences reached');
+                return;
+            }
+
+            // Add new experience entry
+            setExperienceList(prev => [...prev, {
+                title: '',
+                company: '',
+                city: '',
+                state: '',
+                startDate: '',
+                endDate: '',
+                currentlyWorking: false,
+                description: ''
+            }]);
+
+            // Update context
+            setResumeInfo(prev => ({
+                ...prev,
+                experience: [...experienceList, {
+                    title: '',
+                    company: '',
+                    city: '',
+                    state: '',
+                    startDate: '',
+                    endDate: '',
+                    currentlyWorking: false,
+                    description: ''
+                }]
+            }));
+
+            toast.success('New experience section added');
+        } catch (error) {
+            console.error('Error adding new experience:', error);
+            toast.error('Failed to add new experience section');
+        }
     };
 
     const RemoveExperience = () => {
@@ -158,7 +197,7 @@ function Experience() {
                                     onChange={(e) => handleChange(index, e)}
                                     disabled={exp.currentlyWorking}
                                 />
-                                <label className="flex items-center gap-1">
+                                <label className="flex items-center gap-3">
                                     <Input
                                         type="checkbox"
                                         name="currentlyWorking"
