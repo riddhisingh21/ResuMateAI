@@ -8,8 +8,6 @@ import Header from './components/ui/custom/Header'
 import { Toaster } from 'sonner'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   const {user, isLoaded, isSignedIn} = useUser();
 
   if(!isSignedIn && isLoaded){
@@ -17,11 +15,13 @@ function App() {
   }
 
   return (
-    <>
-     <Header/>
-      <Outlet />
+    <div className="min-h-screen flex flex-col">
+      <Header/>
+      <main className="flex-1">
+        <Outlet />
+      </main>
       <Toaster/>
-    </>
+    </div>
   )
 }
 

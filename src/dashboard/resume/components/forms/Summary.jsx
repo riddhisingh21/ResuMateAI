@@ -30,13 +30,23 @@ function Summary({ enabledNext }) {
     const formatAIResponse = (response) => {
         try {
             const parsedResponse = JSON.parse(response);
-            if (parsedResponse.jobTitle && parsedResponse.resumeSummaries) {
-                return parsedResponse.resumeSummaries.map(section => ({
-                    experienceLevel: section.experienceLevel,
-                    summary: section.summary
-                }));
+            const summaries = [];
+            
+            // Check if we have both ExperienceLevel and Summary arrays
+            if (parsedResponse.ExperienceLevel && parsedResponse.Summary) {
+                // Loop through the Summary array
+                parsedResponse.Summary.forEach((summaryObj) => {
+                    const level = Object.keys(summaryObj)[0];
+                    const summary = summaryObj[level];
+                    
+                    summaries.push({
+                        experienceLevel: level,
+                        summary: summary
+                    });
+                });
             }
-            return [];
+            
+            return summaries;
         } catch (error) {
             console.error('Parsing error:', error);
             return [];
