@@ -14,6 +14,10 @@ function FormSection() {
     const [enableNext, setEnableNext] = useState(false);
     const {resumeId} = useParams();
 
+    const enabledNext = (value) => {
+        setEnableNext(value);
+    };
+
     // Reset enableNext when switching forms
     useEffect(() => {
         setEnableNext(false);
@@ -26,7 +30,24 @@ function FormSection() {
 
     const handleBack = () => {
         setActiveFormIndex(prev => prev - 1);
-        setEnableNext(true); // Enable next when going back since form was already completed
+        setEnableNext(true);
+    };
+
+    const renderForm = () => {
+        switch(activeFormIndex) {
+            case 1:
+                return <PersonalDetail enabledNext={enabledNext}/>;
+            case 2:
+                return <Summary enabledNext={enabledNext}/>;
+            case 3:
+                return <Experience enabledNext={enabledNext}/>;
+            case 4:
+                return <Education enabledNext={enabledNext}/>;
+            case 5:
+                return <Skills enabledNext={enabledNext}/>;
+            default:
+                return null;
+        }
     };
 
     return (

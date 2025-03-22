@@ -18,6 +18,14 @@ function Summary({ enabledNext }) {
     const params = useParams();
     const [aiGeneratedSummaryList, setAiGeneratedSummaryList] = useState([]);
 
+    // Add this useEffect to initialize the summary with saved content
+    useEffect(() => {
+        if (resumeInfo?.summary) {
+            setSummary(resumeInfo.summary);
+            enabledNext(true); // Enable next button if summary exists
+        }
+    }, [resumeInfo]);
+
     useEffect(() => {
         if (resumeInfo && summary) {
             setResumeInfo(prev => ({

@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import GlobalApi from './../../../../../service/GlobalApi';
 import { toast } from 'sonner';
 
-function Experience() {
+function Experience({ enabledNext }) {
     const [experienceList, setExperienceList] = useState([{
         title: '',
         company: '',
@@ -67,6 +67,18 @@ function Experience() {
             return;
         }
 
+        // Validate required fields
+        const isValid = experienceList.every(exp => 
+            exp.title.trim() && 
+            exp.company.trim() && 
+            exp.startDate
+        );
+
+        if (!isValid) {
+            toast.error('Please fill in all required fields (Job Title, Company, and Start Date)');
+            return;
+        }
+
         setLoading(true);
         try {
             const data = {
@@ -78,10 +90,12 @@ function Experience() {
             const response = await GlobalApi.UpdateResumeDetail(params.resumeId, data);
             if (response?.data) {
                 toast.success('Experience updated successfully');
+                enabledNext(true); // Enable the next button after successful save
             }
         } catch (error) {
             console.error('Save Error:', error);
             toast.error(error.response?.data?.error?.message || 'Failed to update experience');
+            enabledNext(false); // Disable next button if save fails
         } finally {
             setLoading(false);
         }
