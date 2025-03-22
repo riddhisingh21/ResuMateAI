@@ -6,7 +6,16 @@ import { AIchatSession } from '../../../../service/AIModal';
 import { toast } from 'sonner';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 
-const PROMPT = "Job Title: {positionTitle} , Depends on job title give me 5-7 bulllet points for my experience in resume, give me result in HTML format"
+const PROMPT = `Job Title: {positionTitle}
+Please provide 5-7 bullet points for my experience in resume, formatted as a JSON object with the following structure:
+{
+    "ExperienceLevel": ["Fresher", "Mid-level", "Senior"],
+    "bulletPoints": {
+        "Fresher": ["point1", "point2", ...],
+        "Mid-level": ["point1", "point2", ...],
+        "Senior": ["point1", "point2", ...]
+    }
+}`;
 
 function RichTextEditor({ value, onChange, index }) {
     const [editorValue, setEditorValue] = useState(value || '');
@@ -28,18 +37,33 @@ function RichTextEditor({ value, onChange, index }) {
             const parsedResponse = JSON.parse(response);
             let htmlContent = '';
 
-            parsedResponse.bulletPoints.forEach(section => {
-                htmlContent += `<p><strong>${section.experienceLevel}:</strong></p><ul>`;
-                section.bulletPoints.forEach(point => {
-                    htmlContent += `<li>${point}</li>`;
-                });
-                htmlContent += '</ul>';
+            // Check if both required properties exist
+            if (!parsedResponse.ExperienceLevel || !parsedResponse.bulletPoints) {
+                throw new Error('Invalid response format');
+            }
+
+            // Loop through each experience level
+            parsedResponse.ExperienceLevel.forEach(level => {
+                // Check if this level exists in bulletPoints
+                if (parsedResponse.bulletPoints[level] && Array.isArray(parsedResponse.bulletPoints[level])) {
+                    htmlContent += `<p><strong>${level}:</strong></p><ul>`;
+                    parsedResponse.bulletPoints[level].forEach(point => {
+                        htmlContent += `<li>${point}</li>`;
+                    });
+                    htmlContent += '</ul>';
+                }
             });
+
+            // If no content was generated, throw an error
+            if (!htmlContent) {
+                throw new Error('No valid content found in response');
+            }
 
             return htmlContent;
         } catch (error) {
             console.error('Parsing error:', error);
-            return response; // Return original response if parsing fails
+            // Return a more user-friendly format if parsing fails
+            return '<p>Failed to format AI response. Please try again.</p>';
         }
     };
 
@@ -55,8 +79,16 @@ function RichTextEditor({ value, onChange, index }) {
             const result = await AIchatSession.sendMessage(prompt);
             const response = await result.response.text();
             
+            // Log the raw response for debugging
+            console.log('Raw AI Response:', response);
+            
             // Format the response into HTML
             const formattedHTML = formatAIResponseToHTML(response);
+            
+            if (formattedHTML.includes('Failed to format AI response')) {
+                toast.error('Invalid AI response format. Please try again.');
+                return;
+            }
             
             setEditorValue(formattedHTML);
             onChange(formattedHTML);
