@@ -14,7 +14,7 @@ function Header() {
 
     return (
         <div className='p-3 px-5 flex justify-between bg-background border-b border-border'>
-            <img src="../../../../logo.svg" alt="Logo" className="h-8" />
+            <img src="/image.png" alt="Logo" className="h-10" />
 
             {isSignedIn ? (
                 <div className='flex gap-2 items-center'>

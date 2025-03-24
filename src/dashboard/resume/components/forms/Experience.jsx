@@ -20,7 +20,9 @@ function Experience({ enabledNext }) {
         description: ''
     }]);  
     
-    const { resumeInfo, setResumeInfo } = useContext(ResumeInfoContext);
+    const context = useContext(ResumeInfoContext);
+    const resumeInfo = context?.resumeInfo;
+    const setResumeInfo = context?.setResumeInfo;
     const params = useParams();
     const [loading, setLoading] = useState(false);
 
@@ -40,10 +42,12 @@ function Experience({ enabledNext }) {
         setExperienceList(newEntries);
         
         // Update the context immediately
-        setResumeInfo(prev => ({
-            ...prev,
-            experience: newEntries
-        }));
+        if (setResumeInfo) {
+            setResumeInfo(prev => ({
+                ...prev,
+                experience: newEntries
+            }));
+        }
     };
 
     const handleRichTextChange = (index, value) => {
@@ -55,10 +59,12 @@ function Experience({ enabledNext }) {
         setExperienceList(newEntries);
         
         // Update the context immediately
-        setResumeInfo(prev => ({
-            ...prev,
-            experience: newEntries
-        }));
+        if (setResumeInfo) {
+            setResumeInfo(prev => ({
+                ...prev,
+                experience: newEntries
+            }));
+        }
     };
 
     const onSave = async () => {
