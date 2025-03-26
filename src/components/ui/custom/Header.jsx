@@ -20,6 +20,20 @@ function Header() {
                 <div className='flex gap-2 items-center'>
                     <Button 
                         variant="outline" 
+                        onClick={() => window.open('https://atsresumateai.streamlit.app/', '_blank')}
+                        className="text-foreground hover:bg-accent"
+                    >
+                        Test your Resume
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        onClick={() => window.open('https://ai-mock-interview-react-4a69d.web.app', '_blank')}
+                        className="text-foreground hover:bg-accent"
+                    >
+                        Take a Mock Interview
+                    </Button>
+                    <Button 
+                        variant="outline" 
                         onClick={handleDashboardClick}
                         className="text-foreground hover:bg-accent"
                     >

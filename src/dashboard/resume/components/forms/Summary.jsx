@@ -40,17 +40,17 @@ function Summary({ enabledNext }) {
             const parsedResponse = JSON.parse(response);
             const summaries = [];
             
-            // Check if we have both ExperienceLevel and Summary arrays
-            if (parsedResponse.ExperienceLevel && parsedResponse.Summary) {
-                // Loop through the Summary array
-                parsedResponse.Summary.forEach((summaryObj) => {
-                    const level = Object.keys(summaryObj)[0];
-                    const summary = summaryObj[level];
-                    
-                    summaries.push({
-                        experienceLevel: level,
-                        summary: summary
-                    });
+            // Check if Developer array exists
+            if (parsedResponse.Developer && Array.isArray(parsedResponse.Developer)) {
+                // Loop through the Developer array
+                parsedResponse.Developer.forEach((item) => {
+                    if (item.ExperienceLevel && Array.isArray(item.Summary)) {
+                        summaries.push({
+                            experienceLevel: item.ExperienceLevel,
+                            // Join the summary array items with line breaks
+                            summary: item.Summary.join('\n\n')
+                        });
+                    }
                 });
             }
             

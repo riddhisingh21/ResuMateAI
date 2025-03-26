@@ -45,6 +45,14 @@ function Education({ enabledNext }) {
         setEducationalList(educationalList.slice(0, educationalList.length - 1));
     }
 
+    // Update the context whenever educationalList changes
+    useEffect(() => {
+        setResumeInfo(prev => ({
+            ...prev,
+            Education: educationalList  // Changed to capital E
+        }));
+    }, [educationalList, setResumeInfo]);
+
     const onSave = async () => {
         // Validate required fields
         const isValid = educationalList.every(edu => 
@@ -63,40 +71,39 @@ function Education({ enabledNext }) {
         try {
             const data = {
                 data: {
-                    Education: educationalList.map(({id, ...rest}) => rest)
+                    Education: educationalList.map(({id, ...rest}) => rest)  // Changed to capital E
                 }
             };
 
             const response = await GlobalApi.UpdateResumeDetail(params.resumeId, data);
             if (response.data) {
                 toast.success('Education details updated successfully');
-                enabledNext(true); // Enable next button after successful save
+                enabledNext(true);
+                setResumeInfo(prev => ({
+                    ...prev,
+                    Education: educationalList  // Changed to capital E
+                }));
             }
         } catch (error) {
             console.error('Save Error:', error);
             toast.error('Server Error, Please try again!');
-            enabledNext(false); // Disable next button if save fails
+            enabledNext(false);
         } finally {
             setLoading(false);
         }
     };
 
+    // Load initial data
     useEffect(() => {
-        if (resumeInfo?.education) {
-            setEducationalList(resumeInfo.education);
+        if (resumeInfo?.Education?.length > 0) {  // Changed to capital E
+            setEducationalList(resumeInfo.Education);
         }
     }, [resumeInfo]);
 
+    // Validation effect
     useEffect(() => {
-        setResumeInfo(prev => ({
-            ...prev,
-            Education: educationalList
-        }));
-    }, [educationalList, setResumeInfo]);
-
-    useEffect(() => {
-        if (resumeInfo?.education?.length > 0) {
-            const isValid = resumeInfo.education.every(edu => 
+        if (resumeInfo?.Education?.length > 0) {  // Changed to capital E
+            const isValid = resumeInfo.Education.every(edu =>  // Changed to capital E
                 edu.universityName?.trim() && 
                 edu.degree?.trim() && 
                 edu.startDate
@@ -105,7 +112,7 @@ function Education({ enabledNext }) {
         } else {
             enabledNext(false);
         }
-    }, [resumeInfo?.education, enabledNext]);
+    }, [resumeInfo?.Education, enabledNext]);  // Changed to capital E
     return (
         <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
             <h2 className='font-bold'>Education</h2>

@@ -25,12 +25,26 @@ function Experience({ enabledNext }) {
     const setResumeInfo = context?.setResumeInfo;
     const params = useParams();
     const [loading, setLoading] = useState(false);
+    const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        if (resumeInfo?.experience && resumeInfo.experience.length > 0) {
-            setExperienceList(resumeInfo.experience);
+        if (resumeInfo?.Experience && resumeInfo.Experience.length > 0 && !initialized) {
+            // Clean the incoming data
+            const cleanedData = resumeInfo.Experience.map(({ id, ...rest }) => rest);
+            setExperienceList(cleanedData);
+            setInitialized(true);
+            enabledNext(true);
         }
-    }, [resumeInfo]);
+    }, [resumeInfo, initialized, enabledNext]);
+
+    useEffect(() => {
+        if (initialized && setResumeInfo) {
+            setResumeInfo(prev => ({
+                ...prev,
+                Experience: experienceList
+            }));
+        }
+    }, [experienceList, setResumeInfo, initialized]);
 
     const handleChange = (index, event) => {
         const { name, value } = event.target;
@@ -87,21 +101,25 @@ function Experience({ enabledNext }) {
 
         setLoading(true);
         try {
+            // Remove any id fields from the experience entries
+            const cleanedExperienceList = experienceList.map(({ id, ...rest }) => rest);
+
             const data = {
                 data: {
-                    Experience: experienceList
+                    Experience: cleanedExperienceList
                 }
             };
 
             const response = await GlobalApi.UpdateResumeDetail(params.resumeId, data);
             if (response?.data) {
                 toast.success('Experience updated successfully');
-                enabledNext(true); // Enable the next button after successful save
+                enabledNext(true);
+                setInitialized(true);
             }
         } catch (error) {
             console.error('Save Error:', error);
             toast.error(error.response?.data?.error?.message || 'Failed to update experience');
-            enabledNext(false); // Disable next button if save fails
+            enabledNext(false);
         } finally {
             setLoading(false);
         }
@@ -109,14 +127,12 @@ function Experience({ enabledNext }) {
 
     const AddNewExperience = () => {
         try {
-            // Maximum limit check
             if (experienceList.length >= 10) {
                 toast.error('Maximum limit of 10 experiences reached');
                 return;
             }
 
-            // Add new experience entry
-            setExperienceList(prev => [...prev, {
+            const newExperience = {
                 title: '',
                 company: '',
                 city: '',
@@ -125,22 +141,16 @@ function Experience({ enabledNext }) {
                 endDate: '',
                 currentlyWorking: false,
                 description: ''
-            }]);
+            };
 
-            // Update context
-            setResumeInfo(prev => ({
-                ...prev,
-                experience: [...experienceList, {
-                    title: '',
-                    company: '',
-                    city: '',
-                    state: '',
-                    startDate: '',
-                    endDate: '',
-                    currentlyWorking: false,
-                    description: ''
-                }]
-            }));
+            setExperienceList(prev => [...prev, newExperience]);
+
+            if (setResumeInfo) {
+                setResumeInfo(prev => ({
+                    ...prev,
+                    Experience: [...experienceList, newExperience]
+                }));
+            }
 
             toast.success('New experience section added');
         } catch (error) {

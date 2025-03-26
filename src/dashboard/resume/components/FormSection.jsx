@@ -9,6 +9,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import ThemeColor from "./ThemeColor";
 import Summary from "./forms/Summary";
 
+
 function FormSection() {
     const [activeFormIndex, setActiveFormIndex] = useState(1);
     const [enableNext, setEnableNext] = useState(false);
@@ -63,6 +64,7 @@ function FormSection() {
                     {activeFormIndex > 1 && (
                         <Button 
                             size="sm"
+                            variant="outline"
                             onClick={handleBack}
                         >
                             <ArrowLeft />
@@ -71,6 +73,7 @@ function FormSection() {
 
                     <Button 
                         disabled={!enableNext}
+                        variant="outline"
                         className="flex gap-2" 
                         size="sm"
                         onClick={handleNext}

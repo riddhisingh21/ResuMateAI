@@ -23,8 +23,9 @@ function Home() {
               <div className="mt-10 flex items-center gap-x-6">
                 <Button 
                   size="lg"
+                  variant="outline"
                   onClick={() => navigate('/dashboard')}
-                  className="gap-2"
+                  className="gap-2 border border-black"
                 >
                   <Rocket className="w-4 h-4" />
                   Get Started
