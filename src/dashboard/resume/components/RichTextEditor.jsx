@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Brain, LoaderCircle } from 'lucide-react';
 import React, { useState, useContext, useEffect } from 'react'
 import { BtnBold, BtnBulletList, BtnClearFormatting, BtnItalic, BtnLink, BtnNumberedList, BtnStrikeThrough, BtnStyles, BtnUnderline, Editor, EditorProvider, HtmlButton, Separator, Toolbar } from 'react-simple-wysiwyg'
@@ -104,11 +103,10 @@ function RichTextEditor({ value, onChange, index }) {
         <div>
             <div className='flex justify-between my-2'>
                 <label className='text-xs'>Summary</label>
-                <Button 
-                    className="flex gap-2 border-primary text-primary"
-                    onClick={GenerateSummaryFromAI} 
-                    size="sm" 
-                    variant="outline"
+                <button
+                    type="button"
+                    style={{border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '6px 12px', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1}}
+                    onClick={GenerateSummaryFromAI}
                     disabled={loading}
                 >
                     {loading ? (
@@ -119,7 +117,7 @@ function RichTextEditor({ value, onChange, index }) {
                             Generate from AI
                         </>
                     )}
-                </Button>
+                </button>
             </div>
             <EditorProvider>
                 <Editor 

@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'
 import { ResumeInfoContext } from '@/context/ResumeInfoContext'
 import { LoaderCircle } from 'lucide-react';
@@ -152,9 +151,9 @@ function PersonalDetail({ enabledNext }) {
                     
                 </div>
                 <div className='mt-3 flex justify-end'>
-                    <Button type='submit' disabled={loading}>
+                    <button type='submit' disabled={loading} style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
                         {loading ? <LoaderCircle className='animate-spin'/> : 'Save'}
-                    </Button>
+                    </button>
                 </div>
             </form>
         </div>

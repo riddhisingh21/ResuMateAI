@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Brain, FileText, Sparkles, Rocket } from 'lucide-react';
 
@@ -21,22 +20,19 @@ function Home() {
                 Create tailored, professional resumes in minutes that stand out to employers.
               </p>
               <div className="mt-10 flex items-center gap-x-6">
-                <Button 
-                  size="lg"
-                  variant="outline"
+                <button 
+                  style={{border: '1px solid #000', background: '#fff', color: '#222', borderRadius: '6px', padding: '12px 24px', fontSize: '1rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}
                   onClick={() => navigate('/dashboard')}
-                  className="gap-2 border border-black"
                 >
                   <Rocket className="w-4 h-4" />
                   Get Started
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg"
+                </button>
+                <button 
+                  style={{border: '1px solid #000', background: '#fff', color: '#222', borderRadius: '6px', padding: '12px 24px', fontSize: '1rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}
                   onClick={() => navigate('/auth/sign-in')}
                 >
                   Learn more
-                </Button>
+                </button>
               </div>
             </div>
             <div className="mt-10 lg:mt-0 lg:ml-16 flex justify-center lg:justify-end">
@@ -104,4 +100,4 @@ const features = [
   },
 ];
 
-export default Home
+export default Home;

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import {Rating} from '@smastrom/react-rating';
-import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import GlobalApi from './../../../../../service/GlobalApi';
@@ -42,7 +41,7 @@ function Skills({ enabledNext }) {  // Add enabledNext prop
         setLoading(true);
         const data = {
             data: {
-                Skills: skillsList.map(({ name }) => ({ name })) // Only send the name property
+                Skills: skillsList.map(({ name }) => ({ name })) // Use 'Skills' with capital S
             }
         }
 
@@ -62,8 +61,8 @@ function Skills({ enabledNext }) {  // Add enabledNext prop
     }
 
     useEffect(() => {
-        if (resumeInfo?.skills && Array.isArray(resumeInfo.skills)) {
-            setSkillsList(resumeInfo.skills);
+        if (resumeInfo?.Skills && Array.isArray(resumeInfo.Skills)) {
+            setSkillsList(resumeInfo.Skills);
         }
     }, [resumeInfo]);
 
@@ -71,7 +70,7 @@ function Skills({ enabledNext }) {  // Add enabledNext prop
         if (skillsList) {
             setResumeInfo(prev => ({
                 ...prev,
-                Skills: skillsList
+                Skills: skillsList // Use 'Skills' with capital S in context
             }));
         }
     }, [skillsList, setResumeInfo]);
@@ -114,21 +113,20 @@ function Skills({ enabledNext }) {  // Add enabledNext prop
 
             <div className='flex justify-between'>
                 <div className="flex gap-2">
-                    <Button variant="outline" className="text-primary" onClick={AddNewSkills}>
+                    <button style={{ border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }} onClick={AddNewSkills}>
                         + Add More Skills
-                    </Button>
-                    <Button 
-                        variant="outline" 
-                        className="text-primary" 
+                    </button>
+                    <button 
+                        style={{ border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }} 
                         onClick={RemoveSkills}
                         disabled={skillsList.length <= 1}
                     >
                         - Remove
-                    </Button>
+                    </button>
                 </div>
-                <Button disabled={loading} onClick={onSave}>
+                <button disabled={loading} onClick={onSave} style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
                     {loading ? <LoaderCircle className='animate-spin'/> : 'Save'}
-                </Button>
+                </button>
             </div>
         </div>
     );

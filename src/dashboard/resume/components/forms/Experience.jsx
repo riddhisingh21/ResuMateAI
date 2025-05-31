@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import React, { useContext, useEffect, useState } from 'react';
 import RichTextEditor from '../RichTextEditor';
@@ -259,31 +258,30 @@ function Experience({ enabledNext }) {
             
             <div className='flex justify-between'>
                 <div className="flex gap-2">
-                    <Button 
-                        variant="outline" 
-                        className="text-primary" 
+                    <button 
+                        style={{ border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }} 
                         onClick={AddNewExperience}
                         type="button"
                     >
                         + Add More
-                    </Button>
-                    <Button 
-                        variant="outline" 
-                        className="text-primary" 
+                    </button>
+                    <button 
+                        style={{ border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }} 
                         onClick={RemoveExperience}
                         type="button"
                         disabled={experienceList.length === 0}
                     >
                         - Remove
-                    </Button>
+                    </button>
                 </div>
-                <Button 
+                <button 
                     disabled={loading} 
                     onClick={onSave}
                     type="button"
+                    style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}
                 >
                     {loading ? <LoaderCircle className='animate-spin'/> : 'Save'}
-                </Button>
+                </button>
             </div>
         </div>
     );

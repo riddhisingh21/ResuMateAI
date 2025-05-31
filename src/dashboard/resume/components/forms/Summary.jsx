@@ -1,5 +1,3 @@
-
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 import React, { useContext, useEffect, useState } from 'react';
@@ -39,24 +37,53 @@ function Summary({ enabledNext }) {
         try {
             const parsedResponse = JSON.parse(response);
             const summaries = [];
-            
-            // Check if Developer array exists
-            if (parsedResponse.Developer && Array.isArray(parsedResponse.Developer)) {
-                // Loop through the Developer array
-                parsedResponse.Developer.forEach((item) => {
-                    if (item.ExperienceLevel && Array.isArray(item.Summary)) {
-                        summaries.push({
-                            experienceLevel: item.ExperienceLevel,
-                            // Join the summary array items with line breaks
-                            summary: item.Summary.join('\n\n')
-                        });
-                    }
+
+            // Handle new structure: { Developer: [ { ExperienceLevel, Summary: [] }, ... ] }
+            const mainKey = Object.keys(parsedResponse).find(
+                key => Array.isArray(parsedResponse[key]) && parsedResponse[key].every(item => item.ExperienceLevel && item.Summary)
+            );
+            if (mainKey) {
+                parsedResponse[mainKey].forEach(item => {
+                    summaries.push({
+                        experienceLevel: item.ExperienceLevel || '',
+                        summary: Array.isArray(item.Summary) ? item.Summary.join('\n') : (item.Summary || '')
+                    });
                 });
+                return summaries;
             }
-            
-            return summaries;
+
+            // Handle new AI response structure
+            if (Array.isArray(parsedResponse.resumeSummaries)) {
+                parsedResponse.resumeSummaries.forEach(item => {
+                    summaries.push({
+                        experienceLevel: item.experienceLevel || '',
+                        summary: item.summary || ''
+                    });
+                });
+                return summaries;
+            }
+
+            // Fallback to old structure
+            if (
+                Array.isArray(parsedResponse.Summary) &&
+                parsedResponse.Summary.length > 0 &&
+                Array.isArray(parsedResponse.ExperienceLevel)
+            ) {
+                const summaryObj = parsedResponse.Summary[0];
+                parsedResponse.ExperienceLevel.forEach(level => {
+                    summaries.push({
+                        experienceLevel: level,
+                        summary: summaryObj[level] || ''
+                    });
+                });
+                return summaries;
+            }
+
+            // Log unexpected structure for debugging
+            console.error('Unexpected AI response structure:', parsedResponse);
+            return [];
         } catch (error) {
-            console.error('Parsing error:', error);
+            console.error('Parsing error:', error, '\nRaw response:', response);
             return [];
         }
     };
@@ -77,16 +104,16 @@ function Summary({ enabledNext }) {
             }
 
             const response = await result.response.text();
-            console.log('AI Response:', response);
+            const cleanedResponse = response.replace(/```json\n?|\n?```/g, '').trim();
             
-            const formattedResponse = formatAIResponse(response);
+            const formattedResponse = formatAIResponse(cleanedResponse);
             
             if (formattedResponse.length > 0) {
                 setAiGeneratedSummaryList(formattedResponse);
-                // Set the first summary as default
                 setSummary(formattedResponse[0].summary);
+                toast.success('Successfully generated summaries');
             } else {
-                toast.error('Invalid response format from AI');
+                toast.error('Failed to generate summary');
             }
         } catch (error) {
             console.error('AI Generation Error:', error);
@@ -139,19 +166,18 @@ function Summary({ enabledNext }) {
                 <form className='mt-7' onSubmit={onSave}>
                     <div className='flex justify-between items-end'>
                         <label>Add Summary</label>
-                        <Button 
-                            variant="outline" 
+                        <button 
+                            type="button"
+                            style={{ border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '6px 12px', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
                             onClick={(e) => {
                                 e.preventDefault();
                                 GenerateSummaryFromAI();
                             }}
-                            size="sm" 
-                            className="border-primary text-primary flex gap-2"
                             disabled={loading}
                         >
                             <Brain className='h-4 w-4'/>
                             Generate from AI
-                        </Button>
+                        </button>
                     </div>
                     <Textarea 
                         className="mt-5"
@@ -161,12 +187,13 @@ function Summary({ enabledNext }) {
                         rows={6}
                     />
                     <div className='mt-2 flex justify-end'>
-                        <Button 
+                        <button 
                             type='submit'
                             disabled={loading}
+                            style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500 }}
                         >
                             {loading ? <LoaderCircle className='animate-spin'/> : 'Save'}
-                        </Button>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -196,4 +223,4 @@ function Summary({ enabledNext }) {
     );
 }
 
-export default Summary
+export default Summary;

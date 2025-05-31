@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_STRAPI_API_KEY;
-const BASE_URL = "http://localhost:3453/api";
+const BASE_URL = "http://localhost:1337/api";
 
 const axiosClient = axios.create({
     baseURL: BASE_URL,

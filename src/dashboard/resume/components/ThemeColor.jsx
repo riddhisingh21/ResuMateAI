@@ -4,7 +4,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from '@/components/ui/button';
 import { LayoutGrid } from 'lucide-react';
 import { ResumeInfoContext } from '@/context/ResumeInfoContext';
 import GlobalApi from '../../../../service/GlobalApi';
@@ -45,8 +44,9 @@ function ThemeColor() {
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant="outline" size="sm"
-                    className="flex gap-2"><LayoutGrid />Theme</Button>
+                <button type="button" style={{border: '1px solid #ccc', background: '#fff', color: '#222', borderRadius: '6px', padding: '6px 12px', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}>
+                    <LayoutGrid />Theme
+                </button>
             </PopoverTrigger>
             <PopoverContent>
                 <h2 className='mb-2 text-sm font-bold'>Select Theme color</h2>

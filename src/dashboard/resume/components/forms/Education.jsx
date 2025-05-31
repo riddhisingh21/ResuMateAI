@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ResumeInfoContext } from "@/context/ResumeInfoContext";
 import { LoaderCircle, University } from "lucide-react";
@@ -172,12 +171,12 @@ function Education({ enabledNext }) {
 
             <div className='flex justify-between'>
                 <div>
-                    <Button variant="outline" className="text-primary" onClick={AddNewEducation} >+ Add More Education</Button>
-                    <Button variant="outline" className="text-primary" onClick={RemoveEducation} >- Remove</Button>
+                    <button type="button" onClick={AddNewEducation} style={{ border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '6px 12px', fontWeight: 500, marginRight: '8px', cursor: 'pointer' }}>+ Add More Education</button>
+                    <button type="button" onClick={RemoveEducation} style={{ border: '1px solid #2563eb', background: '#fff', color: '#2563eb', borderRadius: '6px', padding: '6px 12px', fontWeight: 500, cursor: 'pointer' }}>- Remove</button>
                 </div>
-                <Button disabled={loading} onClick={() => onSave()}>
+                <button type="button" disabled={loading} onClick={() => onSave()} style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     {loading ? <LoaderCircle className='animate-spin' /> : 'Save'}
-                </Button>
+                </button>
             </div>
         </div>
     )

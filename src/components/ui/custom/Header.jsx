@@ -2,7 +2,6 @@ import React from 'react'
 import { useUser } from '@clerk/clerk-react'
 import { UserButton } from '@clerk/clerk-react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Button } from '../button'
 
 function Header() {
     const { user, isSignedIn } = useUser()
@@ -18,38 +17,35 @@ function Header() {
 
             {isSignedIn ? (
                 <div className='flex gap-2 items-center'>
-                    <Button 
-                        variant="outline" 
+                    <button 
+                        style={{ background: 'white', color: '#222', border: '1px solid #ccc', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}
                         onClick={() => window.open('https://atsresumateai.streamlit.app/', '_blank')}
-                        className="text-foreground hover:bg-accent"
                     >
                         Test your Resume
-                    </Button>
-                    <Button 
-                        variant="outline" 
+                    </button>
+                    <button 
+                        style={{ background: 'white', color: '#222', border: '1px solid #ccc', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}
                         onClick={() => window.open('https://ai-mock-interview-react-4a69d.web.app', '_blank')}
-                        className="text-foreground hover:bg-accent"
                     >
                         Take a Mock Interview
-                    </Button>
-                    <Button 
-                        variant="outline" 
+                    </button>
+                    <button 
+                        style={{ background: 'white', color: '#222', border: '1px solid #ccc', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}
                         onClick={handleDashboardClick}
-                        className="text-foreground hover:bg-accent"
                     >
                         Dashboard
-                    </Button>
+                    </button>
                     <UserButton />
                 </div>
             ) : (
                 <Link to={'/auth/sign-in'}>
-                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                    <button style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
                         Get Started
-                    </Button>
+                    </button>
                 </Link>
             )}
         </div>
     )
 }
 
-export default Header
+export default Header;

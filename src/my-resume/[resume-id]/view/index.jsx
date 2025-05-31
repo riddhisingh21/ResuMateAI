@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import GlobalApi from "./../../../../service/GlobalApi";
 import { RWebShare } from "react-web-share";
-import { Button } from "@/components/ui/button";
 import ResumePreview from "@/dashboard/resume/components/ResumePreview";
 
 function ViewResume() {
@@ -32,7 +31,7 @@ function ViewResume() {
                     <h2 className="text-center text-2xl font-medium">Congrats! Your ResuMate AI generated resume is ready!</h2>
                     <p className="text-center text-gray-400">Now you are ready to download your resume and you can share unique resume URL with your friends and family</p>
                     <div className="flex justify-between px-44 my-10">
-                        <Button onClick={HandleDownload}>Download</Button>
+                        <button onClick={HandleDownload} style={{background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer'}}>Download</button>
                         <RWebShare
                             data={{
                                 text: "Hello, everyone this is my resume please open url to see it",
@@ -41,7 +40,7 @@ function ViewResume() {
                             }}
                             onClick={() => console.log("shared successfully!")}
                         >
-                            <Button>Share</Button>
+                            <button type="button" style={{background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer'}}>Share</button>
                         </RWebShare>
                     </div>
                 </div>

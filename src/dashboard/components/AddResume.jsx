@@ -12,7 +12,6 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import GlobalApi from '../../../service/GlobalApi';
 import { useUser } from '@clerk/clerk-react';
@@ -73,15 +72,15 @@ function AddResume() {
                         />
                     </DialogDescription>
                     <div className='flex justify-end gap-5'>
-                        <Button onClick={()=>setOpenDialog(false)} variant={Ghost}>
+                        <button onClick={()=>setOpenDialog(false)} style={{ background: '#f3f4f6', color: '#222', border: '1px solid #ccc', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
                             Cancel
-                        </Button>
+                        </button>
 
-                        <Button variant={Ghost} disabled={!resumeTitle || loading} onClick={() => onCreate()}>
+                        <button disabled={!resumeTitle || loading} onClick={() => onCreate()} style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
                             {loading? 
                             <Loader2 className='animate-spin'/> : 'Create'
                         }
-                        </Button>
+                        </button>
                     </div>
                 </DialogHeader>
             </DialogContent>

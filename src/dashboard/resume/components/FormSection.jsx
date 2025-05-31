@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PersonalDetail from "./forms/PersonalDetail";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Home, LayoutGrid } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Home } from 'lucide-react'
 import Experience from "./forms/Experience";
 import Education from "./forms/Education";
 import Skills from "./forms/Skills";
@@ -56,30 +55,31 @@ function FormSection() {
             <div className='flex justify-between items-center'>
                 <div className="flex gap-5">
                     <Link to={"/dashboard"}>
-                        <Button><Home /></Button>
+                        <button type="button" style={{ background: '#f3f4f6', color: '#222', border: '1px solid #ccc', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Home />
+                        </button>
                     </Link>
                     <ThemeColor/>
                 </div>
                 <div className="flex gap-2">
                     {activeFormIndex > 1 && (
-                        <Button 
-                            size="sm"
-                            variant="outline"
+                        <button 
+                            type="button"
+                            style={{ background: '#f3f4f6', color: '#222', border: '1px solid #ccc', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                             onClick={handleBack}
                         >
                             <ArrowLeft />
-                        </Button>
+                        </button>
                     )}
 
-                    <Button 
+                    <button 
+                        type="button"
                         disabled={!enableNext}
-                        variant="outline"
-                        className="flex gap-2" 
-                        size="sm"
+                        style={{ background: !enableNext ? '#e5e7eb' : '#2563eb', color: !enableNext ? '#888' : 'white', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: !enableNext ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                         onClick={handleNext}
                     >
                         Next<ArrowRight />
-                    </Button>
+                    </button>
                 </div>
             </div>
 
