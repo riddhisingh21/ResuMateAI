@@ -25,10 +25,13 @@ function Skills({ enabledNext }) {  // Add enabledNext prop
     }
 
     const AddNewSkills = () => {
-        setSkillsList(prev => [...prev, {
-            name: '',
-            rating: 0
-        }]);
+        setSkillsList(prev => {
+            if (prev.length >= 10) return prev; // Limit maximum skills
+            return [...prev, {
+                name: '',
+                rating: 0
+            }];
+        });
     }
 
     const RemoveSkills = () => {
@@ -68,17 +71,19 @@ function Skills({ enabledNext }) {  // Add enabledNext prop
 
     useEffect(() => {
         if (skillsList) {
-            setResumeInfo(prev => ({
-                ...prev,
-                Skills: skillsList // Use 'Skills' with capital S in context
-            }));
+            const timeoutId = setTimeout(() => {
+                setResumeInfo(prev => ({
+                    ...prev,
+                    Skills: skillsList 
+                }));
+            }, 300); 
+            return () => clearTimeout(timeoutId);
         }
     }, [skillsList, setResumeInfo]);
 
-    // Add validation effect
     useEffect(() => {
         if (skillsList) {
-            const isValid = skillsList.some(skill => skill.name.trim()); // Enable next if at least one skill has a name
+            const isValid = skillsList.some(skill => skill.name.trim()); 
             enabledNext(isValid);
         } else {
             enabledNext(false);

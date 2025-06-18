@@ -16,11 +16,10 @@ function Summary({ enabledNext }) {
     const params = useParams();
     const [aiGeneratedSummaryList, setAiGeneratedSummaryList] = useState([]);
 
-    // Add this useEffect to initialize the summary with saved content
     useEffect(() => {
         if (resumeInfo?.summary) {
             setSummary(resumeInfo.summary);
-            enabledNext(true); // Enable next button if summary exists
+            enabledNext(true); 
         }
     }, [resumeInfo]);
 
@@ -38,7 +37,6 @@ function Summary({ enabledNext }) {
             const parsedResponse = JSON.parse(response);
             const summaries = [];
 
-            // Handle new structure: { Developer: [ { ExperienceLevel, Summary: [] }, ... ] }
             const mainKey = Object.keys(parsedResponse).find(
                 key => Array.isArray(parsedResponse[key]) && parsedResponse[key].every(item => item.ExperienceLevel && item.Summary)
             );

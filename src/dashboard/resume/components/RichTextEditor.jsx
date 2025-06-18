@@ -36,14 +36,12 @@ function RichTextEditor({ value, onChange, index }) {
             const parsedResponse = JSON.parse(response);
             let htmlContent = '';
 
-            // Check if both required properties exist
             if (!parsedResponse.ExperienceLevel || !parsedResponse.bulletPoints) {
                 throw new Error('Invalid response format');
             }
 
-            // Loop through each experience level
             parsedResponse.ExperienceLevel.forEach(level => {
-                // Check if this level exists in bulletPoints
+                
                 if (parsedResponse.bulletPoints[level] && Array.isArray(parsedResponse.bulletPoints[level])) {
                     htmlContent += `<p><strong>${level}:</strong></p><ul>`;
                     parsedResponse.bulletPoints[level].forEach(point => {
@@ -53,7 +51,6 @@ function RichTextEditor({ value, onChange, index }) {
                 }
             });
 
-            // If no content was generated, throw an error
             if (!htmlContent) {
                 throw new Error('No valid content found in response');
             }
@@ -61,7 +58,7 @@ function RichTextEditor({ value, onChange, index }) {
             return htmlContent;
         } catch (error) {
             console.error('Parsing error:', error);
-            // Return a more user-friendly format if parsing fails
+          
             return '<p>Failed to format AI response. Please try again.</p>';
         }
     };
@@ -78,10 +75,9 @@ function RichTextEditor({ value, onChange, index }) {
             const result = await AIchatSession.sendMessage(prompt);
             const response = await result.response.text();
             
-            // Log the raw response for debugging
+            
             console.log('Raw AI Response:', response);
             
-            // Format the response into HTML
             const formattedHTML = formatAIResponseToHTML(response);
             
             if (formattedHTML.includes('Failed to format AI response')) {

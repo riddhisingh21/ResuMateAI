@@ -49,7 +49,7 @@ function PersonalDetail({ enabledNext }) {
         setLoading(true);
 
         try {
-            // Structure the data according to Strapi's requirements
+            // Structure  data according to Strapi's requirements
             const payload = {
                 data: {
                     firstName: formData.firstName,
@@ -69,8 +69,8 @@ function PersonalDetail({ enabledNext }) {
             }
 
         } catch (error) {
-            console.error('Error updating details:', error); // Log the error
-            // Log more detailed error information
+            console.error('Error updating details:', error); 
+            
             if (error.response) {
                 console.error('Error response:', error.response.data);
             }

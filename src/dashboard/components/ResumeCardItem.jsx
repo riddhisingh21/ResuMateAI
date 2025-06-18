@@ -5,7 +5,6 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
@@ -19,7 +18,6 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
 
   
@@ -53,9 +51,8 @@ function ResumeCardItem({ resume, refreshData }) {
 
     return (
         <div className="flex flex-col">
-            {/* Card Container */}
+           
             <div className="relative group">
-                {/* Resume Card */}
                 <div 
                     className='p-14 bg-secondary flex items-center justify-center h-[280px] border border-primary rounded-lg
                     hover:scale-105 transition-all hover:shadow-md shadow-primary cursor-pointer'
@@ -64,7 +61,6 @@ function ResumeCardItem({ resume, refreshData }) {
                     <Notebook className="w-12 h-12 text-primary" />
                 </div>
 
-                {/* Dropdown Menu */}
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <DropdownMenu>
                         <DropdownMenuTrigger>
@@ -76,8 +72,12 @@ function ResumeCardItem({ resume, refreshData }) {
                                 Edit
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive" onClick={() => setOpenAlert(true)}>
-                                Delete
+                            <DropdownMenuItem
+                                    className="text-destructive"
+                                    onClick={() => {
+                                        onDelete();    
+                                        setOpenAlert(true); }}>
+                                    Delete
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

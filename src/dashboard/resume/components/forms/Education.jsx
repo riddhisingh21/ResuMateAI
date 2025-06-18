@@ -48,12 +48,12 @@ function Education({ enabledNext }) {
     useEffect(() => {
         setResumeInfo(prev => ({
             ...prev,
-            Education: educationalList  // Changed to capital E
+            Education: educationalList 
         }));
     }, [educationalList, setResumeInfo]);
 
     const onSave = async () => {
-        // Validate required fields
+       
         const isValid = educationalList.every(edu => 
             edu.universityName.trim() && 
             edu.degree.trim() && 
@@ -80,7 +80,7 @@ function Education({ enabledNext }) {
                 enabledNext(true);
                 setResumeInfo(prev => ({
                     ...prev,
-                    Education: educationalList  // Changed to capital E
+                    Education: educationalList 
                 }));
             }
         } catch (error) {
@@ -92,17 +92,16 @@ function Education({ enabledNext }) {
         }
     };
 
-    // Load initial data
     useEffect(() => {
-        if (resumeInfo?.Education?.length > 0) {  // Changed to capital E
+        if (resumeInfo?.Education?.length > 0) { 
             setEducationalList(resumeInfo.Education);
         }
     }, [resumeInfo]);
 
     // Validation effect
     useEffect(() => {
-        if (resumeInfo?.Education?.length > 0) {  // Changed to capital E
-            const isValid = resumeInfo.Education.every(edu =>  // Changed to capital E
+        if (resumeInfo?.Education?.length > 0) {  
+            const isValid = resumeInfo.Education.every(edu =>  
                 edu.universityName?.trim() && 
                 edu.degree?.trim() && 
                 edu.startDate
@@ -111,7 +110,7 @@ function Education({ enabledNext }) {
         } else {
             enabledNext(false);
         }
-    }, [resumeInfo?.Education, enabledNext]);  // Changed to capital E
+    }, [resumeInfo?.Education, enabledNext]);  
     return (
         <div className='p-5 shadow-lg rounded-lg border-t-primary border-t-4 mt-10'>
             <h2 className='font-bold'>Education</h2>

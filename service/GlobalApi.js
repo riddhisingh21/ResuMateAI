@@ -5,14 +5,13 @@ const API_KEY = import.meta.env.VITE_STRAPI_API_KEY;
 
 
 const axiosClient = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL+"/api/",
+    baseURL: "https://strapi-admin-resumate-ai.onrender.com/api",
     headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
     },
 });
 
-// Add request interceptor for debugging
 axiosClient.interceptors.request.use(
     (config) => {
         console.log('Request:', config);
@@ -24,7 +23,6 @@ axiosClient.interceptors.request.use(
     }
 );
 
-// Add response interceptor for debugging
 axiosClient.interceptors.response.use(
     (response) => {
         console.log('Response:', response);
@@ -33,7 +31,7 @@ axiosClient.interceptors.response.use(
     (error) => {
         console.error('Response Error:', error);
         if (error.response) {
-            // The request was made and the server responded with a status code
+           
             console.error('Error Data:', error.response.data);
             console.error('Error Status:', error.response.status);
             console.error('Error Headers:', error.response.headers);
@@ -56,10 +54,10 @@ const GetUserResumes = (userEmail) => {
 };
 
 const UpdateResumeDetail = (id, data) => {
-    // Ensure data is properly structured for Strapi
+    
     const payload = {
         data: {
-            ...data.data, // Add additional data if needed, e.g., 'firstName', 'lastName', etc.
+            ...data.data, 
         }
     };
     return axiosClient.put(`/user-resumes/${id}`, payload);
