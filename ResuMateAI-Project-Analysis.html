@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResuMateAI Project Analysis</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --text: #111827;
+        --muted: #4b5563;
+        --line: #e5e7eb;
+        --accent: #2563eb;
+        --heading: #0f172a;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.6;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 32px auto;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        border-radius: 14px;
+        padding: 36px 48px 48px;
+      }
+
+      h1, h2, h3 {
+        color: var(--heading);
+        margin-top: 1.5em;
+        margin-bottom: 0.4em;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        margin-top: 0;
+        border-bottom: 2px solid var(--line);
+        padding-bottom: 12px;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 1.8em;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+        margin-top: 1.1em;
+      }
+
+      p, li {
+        font-size: 0.98rem;
+        color: var(--text);
+      }
+
+      ul, ol {
+        padding-left: 1.4rem;
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-top: 8px;
+      }
+
+      .tag {
+        display: inline-block;
+        background: #eff6ff;
+        color: var(--accent);
+        border: 1px solid #bfdbfe;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 8px;
+        margin-bottom: 8px;
+      }
+
+      code, pre {
+        font-family: "Courier New", monospace;
+      }
+
+      pre {
+        background: #f8fafc;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 14px 16px;
+        overflow-x: auto;
+        font-size: 0.84rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+      }
+
+      th, td {
+        border: 1px solid var(--line);
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 0.92rem;
+      }
+
+      th {
+        background: #f8fafc;
+      }
+
+      .question {
+        font-weight: 700;
+        color: var(--heading);
+      }
+
+      .answer {
+        margin-top: 6px;
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .page {
+          max-width: none;
+          margin: 0;
+          border: none;
+          box-shadow: none;
+          border-radius: 0;
+          padding: 0.5in;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <h1>ResuMateAI Project Analysis</h1>
+      <div class="meta">Repository: <strong>riddhisingh21/ResuMateAI</strong> | URL: https://github.com/riddhisingh21/ResuMateAI</div>
+      <div style="margin-top: 18px;">
+        <span class="tag">React</span>
+        <span class="tag">Vite</span>
+        <span class="tag">Clerk</span>
+        <span class="tag">Gemini AI</span>
+        <span class="tag">Strapi</span>
+        <span class="tag">Tailwind CSS</span>
+      </div>
+
+      <h2>What this project does</h2>
+      <p>
+        ResuMateAI is an AI-powered resume builder. It allows users to sign in, create multiple resumes,
+        fill in their personal information, summary, work experience, education, and skills, generate
+        AI-based content, preview the result, and download or share the final resume.
+      </p>
+      <p>
+        The project mainly solves the problem of making resume creation easier and more polished, especially
+        for people who need strong professional wording quickly.
+      </p>
+
+      <h2>Tech stack</h2>
+      <ul>
+        <li><strong>Frontend:</strong> React 18 + Vite</li>
+        <li><strong>Authentication:</strong> Clerk</li>
+        <li><strong>Styling:</strong> Tailwind CSS</li>
+        <li><strong>AI:</strong> Google Generative AI (Gemini 1.5 Flash)</li>
+        <li><strong>API backend:</strong> Strapi REST API</li>
+        <li><strong>Routing:</strong> React Router DOM</li>
+        <li><strong>UI features:</strong> Radix UI, Lucide icons, Sonner notifications</li>
+      </ul>
+
+      <h2>How it works</h2>
+      <ol>
+        <li>The application starts from <strong>src/main.jsx</strong> and sets up routing.</li>
+        <li><strong>App.jsx</strong> checks whether the user is signed in using Clerk.</li>
+        <li>If signed in, the user can access the home page and dashboard.</li>
+        <li>The dashboard lists resumes using <strong>GlobalApi.js</strong> and the Strapi API.</li>
+        <li>When a new resume is created, a UUID is generated and saved in the backend.</li>
+        <li>The editor page loads resume data into <strong>ResumeInfoContext</strong>.</li>
+        <li>Each form updates the shared resume state and saves it to the server.</li>
+        <li>The preview page consumes the same state and shows a live resume layout.</li>
+        <li>AI features call Gemini to generate summary and bullet point suggestions.</li>
+        <li>The user can print, download, or share the final resume.</li>
+      </ol>
+
+      <h2>Workflow</h2>
+      <pre>
+1. User opens /auth/sign-in
+2. Clerk login is completed
+3. User navigates to /dashboard
+4. Resume list is loaded from Strapi
+5. User clicks “Create new resume”
+6. Resume is added using POST /user-resumes
+7. User is redirected to /dashboard/resume/:resumeId/edit
+8. User fills personal details, summary, experience, education, skills
+9. Data is updated using PUT /user-resumes/:id
+10. ResumePreview shows live updates
+11. User clicks Download or Share
+12. Final resume is printed or shared by URL
+      </pre>
+
+      <h2>Core files</h2>
+      <ul>
+        <li><strong>src/main.jsx</strong> – route setup and app bootstrap</li>
+        <li><strong>src/App.jsx</strong> – authentication guard and layout</li>
+        <li><strong>src/dashboard/index.jsx</strong> – dashboard and resume list</li>
+        <li><strong>src/dashboard/components/AddResume.jsx</strong> – create-new-resume flow</li>
+        <li><strong>src/dashboard/resume/[resumeId]/edit/index.jsx</strong> – editing page</li>
+        <li><strong>src/dashboard/resume/components/FormSection.jsx</strong> – multi-step form navigation</li>
+        <li><strong>src/dashboard/resume/components/ResumePreview.jsx</strong> – final resume view</li>
+        <li><strong>service/GlobalApi.js</strong> – API communication with Strapi</li>
+        <li><strong>service/AIModal.js</strong> – Gemini API configuration</li>
+        <li><strong>src/dashboard/resume/components/forms/Summary.jsx</strong> – AI summary generation</li>
+        <li><strong>src/dashboard/resume/components/RichTextEditor.jsx</strong> – AI experience bullet generation</li>
+        <li><strong>src/my-resume/[resume-id]/view/index.jsx</strong> – final share/download page</li>
+      </ul>
+
+      <h2>Important technical observations</h2>
+      <ul>
+        <li>The project is mostly frontend-driven; real data is stored in an external Strapi backend.</li>
+        <li>AI features depend on Gemini and JSON-based structured responses.</li>
+        <li>Clerk handles authentication and user identity.</li>
+        <li>The app uses React Context to synchronize form values and preview UI.</li>
+        <li>It includes print CSS to support PDF generation through browser print.</li>
+      </ul>
+
+      <h2>Possible interview questions and answers</h2>
+
+      <h3>1. What is ResuMateAI?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">ResuMateAI is an AI-assisted resume builder that allows users to create, edit, and preview professional resumes. It integrates AI to generate summaries and bullet points and stores user resume data in a backend service.</p>
+
+      <h3>2. What are the main technologies used in the project?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">The app uses React, Vite, Clerk for authentication, Tailwind CSS for styling, Strapi for backend data storage, and Google Gemini for AI content generation.</p>
+
+      <h3>3. How is user authentication handled?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">Authentication is handled by Clerk via the <strong>ClerkProvider</strong> and the <strong>useUser()</strong> hook. If the user is not signed in, the application redirects them to the sign-in route.</p>
+
+      <h3>4. How does resume creation work?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">The dashboard uses the AddResume component to collect a title, generates a UUID, and sends the resume data to the backend using the CreateNewResume API function. Then the app navigates the user to the resume editor.</p>
+
+      <h3>5. How does the app save resume data?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">Resume data is saved to Strapi using the GlobalApi wrapper. Each form sends payloads in the format { data: { ... } } using PUT requests to update a specific resume by ID.</p>
+
+      <h3>6. What role does React Context play?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">React Context is used to share the current resume object between form components and the preview component. This allows the form and preview to stay in sync without passing data through many nested props.</p>
+
+      <h3>7. How is AI used in the project?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">Gemini is used to generate a professional summary and experience bullet points based on a user's job title. The generated content is formatted and rendered inside the resume editor.</p>
+
+      <h3>8. What is the purpose of GlobalApi.js?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">GlobalApi.js centralizes all API calls to Strapi. It exposes functions for creating, fetching, updating, and deleting resumes.</p>
+
+      <h3>9. How is the final resume downloaded or printed?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">The view page calls window.print(), and CSS hides non-print elements while keeping only the resume content visible in print mode, making it suitable for PDF export.</p>
+
+      <h3>10. What are the possible improvements?</h3>
+      <p class="question">Answer:</p>
+      <p class="answer">The project should move secret keys to a secure backend, validate ownership of resumes on the backend, sanitize AI-generated HTML, fix inconsistencies in field naming, and add tests and production security controls.</p>
+
+      <h2>Possible viva questions</h2>
+      <ol>
+        <li>Explain the architectural flow of this project from login to final resume export.</li>
+        <li>What is the role of React Router in this app?</li>
+        <li>Why is Context API used here instead of deeply nested props?</li>
+        <li>How do you secure API keys in a Vite React project?</li>
+        <li>How does the app generate AI content and parse JSON responses?</li>
+        <li>What changes would you make to improve data security?</li>
+        <li>How is the preview and form state synchronized?</li>
+        <li>What is the difference between frontend validation and backend validation?</li>
+        <li>What is the purpose of print CSS in this project?</li>
+        <li>How would you test this application comprehensively?</li>
+      </ol>
+
+      <h2>Short conclusion</h2>
+      <p>
+        ResuMateAI is a structured and practical AI resume builder project. It combines modern frontend development,
+        API-driven data handling, AI-assisted content generation, and print/share workflows. It is a strong example of a
+        real-world CRUD + AI application built with React and Vite.
+      </p>
+    </div>
+  </body>
+</html>
